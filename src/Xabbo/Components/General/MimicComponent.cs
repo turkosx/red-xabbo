@@ -39,7 +39,7 @@ public partial class MimicComponent : Component
     [Reactive] public bool Sign { get; set; } = true;
     [Reactive] public bool Effect { get; set; } = true;
     [Reactive] public bool Sit { get; set; } = true;
-    [Reactive] public bool Follow { get; set; }
+    [Reactive] public bool Follow { get; set; } = true;
     [Reactive] public bool Typing { get; set; } = true;
     [Reactive] public bool Talk { get; set; } = true;
     [Reactive] public bool Shout { get; set; } = true;
