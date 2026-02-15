@@ -5,6 +5,7 @@ using ReactiveUI;
 
 using Xabbo.Core;
 using Xabbo.Core.Game;
+using Xabbo.Core.Tasks;
 using Xabbo.Extension;
 using Xabbo.Messages.Flash;
 using Xabbo.Services.Abstractions;
@@ -17,6 +18,7 @@ public partial class SearchUsersComponent : Component
     private static readonly string[] _categories = ["popular", "top_promotions", "new_ads"];
 
     private readonly ILocalizationService _localizer;
+    private readonly RoomManager _roomManager;
     private readonly object _sync = new();
     private readonly HashSet<Id> _seenRoomIds = [];
     private readonly List<RoomInfo> _rooms = [];
@@ -25,12 +27,15 @@ public partial class SearchUsersComponent : Component
     private TaskCompletionSource<bool>? _roomScanSignal;
     private bool _capturePackets;
     private bool _captureNavigator;
+    private bool _awaitingUsers;
 
     private Id _currentRoomId = -1;
     private string _currentRoomName = "";
     private string _targetNormalized = "";
 
     private Id _foundRoomId = -1;
+    private string? _statusKey;
+    private object[] _statusArgs = [];
 
     [Reactive] public string TargetUser { get; set; } = "";
     [Reactive] public bool IsSearching { get; private set; }
@@ -47,10 +52,13 @@ public partial class SearchUsersComponent : Component
 
     public SearchUsersComponent(
         IExtension extension,
-        ILocalizationService localizer)
+        ILocalizationService localizer,
+        RoomManager roomManager)
         : base(extension)
     {
         _localizer = localizer;
+        _roomManager = roomManager;
+        _localizer.LanguageChanged += OnLanguageChanged;
 
         StartCmd = ReactiveCommand.Create(StartSearch);
         StopCmd = ReactiveCommand.Create(StopSearch);
@@ -97,6 +105,7 @@ public partial class SearchUsersComponent : Component
         _foundRoomId = -1;
         RoomsQueued = 0;
         RoomsScanned = 0;
+        _awaitingUsers = false;
 
         lock (_sync)
         {
@@ -119,6 +128,7 @@ public partial class SearchUsersComponent : Component
 
         _capturePackets = false;
         _captureNavigator = false;
+        _awaitingUsers = false;
         _roomScanSignal?.TrySetResult(true);
 
         if (IsSearching)
@@ -141,7 +151,7 @@ public partial class SearchUsersComponent : Component
                 cancellationToken.ThrowIfCancellationRequested();
 
                 Ext.Send(Out.NewNavigatorSearch, category, "");
-                await Task.Delay(2000, cancellationToken);
+                await Task.Delay(2500, cancellationToken);
             }
 
             await Task.Delay(500, cancellationToken);
@@ -176,19 +186,37 @@ public partial class SearchUsersComponent : Component
                 SetStatus("general.search.status.scanningRoom", room.Name, RoomsScanned, RoomsQueued);
 
                 _roomScanSignal = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+                _awaitingUsers = false;
 
-                Ext.Send(Out.GetGuestRoom, room.Id, 0, 1);
+                EnterRoomTask.Result enterResult = await new EnterRoomTask(Ext, room.Id)
+                    .ExecuteAsync(10000, cancellationToken);
+                if (enterResult is not EnterRoomTask.Result.Success)
+                {
+                    await Task.Delay(500, cancellationToken);
+                    continue;
+                }
+
+                if (TryFindUserInCurrentRoom())
+                {
+                    roomToEnter = _foundRoomId;
+                    break;
+                }
+
+                _awaitingUsers = true;
 
                 Task completed = await Task.WhenAny(
                     _roomScanSignal.Task,
-                    Task.Delay(3000, cancellationToken)
+                    Task.Delay(6000, cancellationToken)
                 );
+                _awaitingUsers = false;
 
                 if (completed == _roomScanSignal.Task && _foundRoomId > 0)
                 {
                     roomToEnter = _foundRoomId;
                     break;
                 }
+
+                await Task.Delay(500, cancellationToken);
             }
 
             if (_foundRoomId > 0)
@@ -212,19 +240,30 @@ public partial class SearchUsersComponent : Component
         {
             _capturePackets = false;
             _captureNavigator = false;
+            _awaitingUsers = false;
             IsSearching = false;
             _roomScanSignal?.TrySetResult(true);
             _roomScanSignal = null;
         }
 
         if (roomToEnter > 0 && !cancellationToken.IsCancellationRequested)
-            Ext.Send(Out.GetGuestRoom, roomToEnter, 0, 1);
+        {
+            try
+            {
+                // Re-enter the found room so the client can fully load room data/assets.
+                await new EnterRoomTask(Ext, roomToEnter).ExecuteAsync(10000, cancellationToken);
+            }
+            catch
+            {
+                // Ignore re-entry failures; search result is already available.
+            }
+        }
     }
 
     [InterceptIn(nameof(In.Users))]
     private void HandleUsers(Intercept e)
     {
-        if (!IsSearching)
+        if (!IsSearching || !_awaitingUsers)
             return;
 
         int packetPosition = e.Packet.Position;
@@ -239,16 +278,10 @@ public partial class SearchUsersComponent : Component
 
             if (user is not null)
             {
-                _foundRoomId = _currentRoomId;
-                FoundUser = user.Name;
-                FoundRoom = string.IsNullOrWhiteSpace(_currentRoomName)
-                    ? $"#{_currentRoomId}"
-                    : $"{_currentRoomName} (#{_currentRoomId})";
-                this.RaisePropertyChanged(nameof(HasResult));
+                SetFound(user.Name, _currentRoomId, _currentRoomName);
             }
 
             _roomScanSignal?.TrySetResult(true);
-            e.Block();
         }
         finally
         {
@@ -331,13 +364,40 @@ public partial class SearchUsersComponent : Component
         nameof(In.TraxSongInfo),
         nameof(In.HabboGroupBadges),
         nameof(In.UserUpdate),
-        nameof(In.UserRemove),
-        nameof(In.GetGuestRoomResult)
+        nameof(In.UserRemove)
     )]
     private void HandleAntiLag(Intercept e)
     {
         if (_capturePackets)
             e.Block();
+    }
+
+    private bool TryFindUserInCurrentRoom()
+    {
+        if (!_roomManager.EnsureInRoom(out IRoom? room))
+            return false;
+
+        IUser? user = room.Avatars
+            .OfType<IUser>()
+            .FirstOrDefault(x =>
+                x.Name.Equals(_targetNormalized, StringComparison.OrdinalIgnoreCase));
+
+        if (user is null)
+            return false;
+
+        string roomName = room.Data?.Name ?? _currentRoomName;
+        SetFound(user.Name, _currentRoomId, roomName);
+        return true;
+    }
+
+    private void SetFound(string userName, Id roomId, string roomName)
+    {
+        _foundRoomId = roomId;
+        FoundUser = userName;
+        FoundRoom = string.IsNullOrWhiteSpace(roomName)
+            ? $"#{roomId}"
+            : $"{roomName} (#{roomId})";
+        this.RaisePropertyChanged(nameof(HasResult));
     }
 
     private void ResetResult()
@@ -349,9 +409,21 @@ public partial class SearchUsersComponent : Component
 
     private void SetStatus(string key, params object[] args)
     {
-        string template = _localizer.Get(key);
-        Status = args.Length == 0
+        _statusKey = key;
+        _statusArgs = args;
+        UpdateStatusText();
+    }
+
+    private void OnLanguageChanged() => UpdateStatusText();
+
+    private void UpdateStatusText()
+    {
+        if (string.IsNullOrWhiteSpace(_statusKey))
+            return;
+
+        string template = _localizer.Get(_statusKey);
+        Status = _statusArgs.Length == 0
             ? template
-            : string.Format(CultureInfo.CurrentCulture, template, args);
+            : string.Format(CultureInfo.CurrentCulture, template, _statusArgs);
     }
 }
