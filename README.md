@@ -1,17 +1,63 @@
-# xabbo
+<p align="center">
+  <img src="ext/screenshot.png" alt="redxabbo screenshot" />
+</p>
 
-Extensao cross-platform para [G-Earth](https://github.com/sirjonasxx/G-Earth), focada em produtividade e qualidade de uso no Habbo.
+<h1 align="center">redxabbo</h1>
 
-Compatibilidade atual:
-- Sistemas: Windows, Linux, macOS
-- Clientes Habbo: Flash e Origins
-- Runtime: .NET 8
-- UI: Avalonia (EN/PT-BR)
+<p align="center">
+  Extensao cross-platform para G-Earth focada em produtividade e qualidade de uso no Habbo.
+</p>
 
-<img src="https://raw.githubusercontent.com/xabbo/xabbo/refs/heads/main/ext/screenshot.png" width="720" alt="xabbo screenshot" />
+<p align="center">
+  <img src="https://img.shields.io/badge/.NET-8-00f5d4?style=flat-square&logo=dotnet&logoColor=ffffff&labelColor=0b0f14" alt=".NET 8" />
+  <img src="https://img.shields.io/badge/C%23-12-00f5d4?style=flat-square&logo=csharp&logoColor=ffffff&labelColor=0b0f14" alt="C#" />
+  <img src="https://img.shields.io/badge/Avalonia-UI-00f5d4?style=flat-square&labelColor=0b0f14" alt="Avalonia UI" />
+  <img src="https://img.shields.io/badge/Xabbo-Framework-00f5d4?style=flat-square&labelColor=0b0f14" alt="Xabbo Framework" />
+  <img src="https://img.shields.io/badge/G--Earth-Extension-00f5d4?style=flat-square&labelColor=0b0f14" alt="G-Earth Extension" />
+  <img src="https://img.shields.io/badge/Platforms-Windows%20%7C%20Linux%20%7C%20macOS-00f5d4?style=flat-square&labelColor=0b0f14" alt="Platforms" />
+  <img src="https://img.shields.io/badge/Habbo-Flash%20%7C%20Origins-00f5d4?style=flat-square&labelColor=0b0f14" alt="Habbo Clients" />
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-00f5d4?style=flat-square&labelColor=0b0f14" alt="License MIT" /></a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/turkosx/red-xabbo">Repositorio</a> |
+  <a href="https://github.com/turkosx/red-xabbo/issues">Issues</a> |
+  <a href="https://xabbo.io/api/Xabbo">Xabbo API</a> |
+  <a href="https://www.habbo.com.br/api/public/api-docs/#/">Habbo API</a>
+</p>
+
+<p align="center">
+  <img src="https://cdn.simpleicons.org/dotnet/00f5d4" height="20" alt=".NET" />
+  <img src="https://cdn.simpleicons.org/avaloniaui/00f5d4" height="20" alt="Avalonia" />
+  <img src="https://cdn.simpleicons.org/githubactions/00f5d4" height="20" alt="GitHub Actions" />
+  <img src="https://cdn.simpleicons.org/linux/00f5d4" height="20" alt="Linux" />
+  <img src="https://cdn.simpleicons.org/apple/00f5d4" height="20" alt="macOS" />
+  <img src="https://cdn.simpleicons.org/windows/00f5d4" height="20" alt="Windows" />
+</p>
+
+---
+
+## Sumario
+- <img src="https://cdn.simpleicons.org/github/00f5d4" height="14" alt="" /> [Visao geral](#visao-geral)
+- <img src="https://cdn.simpleicons.org/dotnet/00f5d4" height="14" alt="" /> [Requisitos](#requisitos)
+- <img src="https://cdn.simpleicons.org/git/00f5d4" height="14" alt="" /> [Setup rapido](#setup-rapido)
+- <img src="https://cdn.simpleicons.org/dotnet/00f5d4" height="14" alt="" /> [Executar em desenvolvimento](#executar-em-desenvolvimento)
+- <img src="https://cdn.simpleicons.org/githubactions/00f5d4" height="14" alt="" /> [Build e testes](#build-e-testes)
+- <img src="https://cdn.simpleicons.org/gnubash/00f5d4" height="14" alt="" /> [Empacotar extensao](#empacotar-extensao)
+- <img src="https://cdn.simpleicons.org/task/00f5d4" height="14" alt="" /> [Scripts do Taskfile](#scripts-do-taskfile)
+- <img src="https://cdn.simpleicons.org/githubactions/00f5d4" height="14" alt="" /> [CI](#ci)
+- <img src="https://cdn.simpleicons.org/github/00f5d4" height="14" alt="" /> [Estrutura do repositorio](#estrutura-do-repositorio)
+- <img src="https://cdn.simpleicons.org/wrench/00f5d4" height="14" alt="" /> [Troubleshooting](#troubleshooting)
+- <img src="https://cdn.simpleicons.org/bookstack/00f5d4" height="14" alt="" /> [Licenca](#licenca)
+
+## Visao geral
+- Extensao para G-Earth com foco em automacoes e operacoes de sala.
+- UI desktop em Avalonia com suporte a EN/PT-BR.
+- Compatibilidade com clientes Habbo Flash e Origins.
+- Distribuicao multiplataforma (Windows, Linux, macOS).
+- Baseada no ecossistema Xabbo (`common`, `messages`, `gearth`, `core`).
 
 ## Requisitos
-
 Para usar a extensao (release):
 - [.NET 8 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 - G-Earth instalado e funcional
@@ -21,60 +67,49 @@ Para desenvolver localmente:
 - Git com suporte a submodules
 - Bash/ZIP para empacotamento (opcional)
 
-## Setup do projeto
-
-```sh
-git clone https://github.com/xabbo/xabbo
-cd xabbo
+## Setup rapido
+```bash
+git clone https://github.com/turkosx/red-xabbo.git
+cd red-xabbo
 git submodule update --init --recursive
 dotnet restore
 ```
 
 ## Executar em desenvolvimento
-
 Comando direto:
-
-```sh
+```bash
 dotnet run --project src/Xabbo.Avalonia
 ```
 
-Atalho com Taskfile (opcional):
-
-```sh
+Atalho com Taskfile:
+```bash
 task run
 ```
 
-## Build e teste
-
-Build da aplicacao:
-
-```sh
-dotnet build src/Xabbo.Avalonia/Xabbo.Avalonia.csproj
-```
-
+## Build e testes
 Build completo da solucao:
-
-```sh
+```bash
 dotnet build Xabbo.sln
 ```
 
-Testes:
-
-```sh
+Teste da solucao principal:
+```bash
 dotnet test Xabbo.sln
 ```
 
+Suite de testes de base (Xabbo.Common):
+```bash
+dotnet test lib/common/Xabbo.Common.sln
+```
+
 ## Empacotar extensao
-
 Script oficial:
-
-```sh
+```bash
 bash ./.scripts/pack.sh
 ```
 
 Atalho:
-
-```sh
+```bash
 task pack
 ```
 
@@ -84,42 +119,33 @@ Saida esperada:
 - `out/icon.png`
 - `out/screenshot.png`
 
-Observacoes sobre o empacotamento:
-- O script publica multiplas plataformas (`win-x64`, `linux-x64`, `osx-x64`, `osx-arm64`).
-- O merge dos binarios macOS usa `lipo` (necessario ter a ferramenta disponivel).
-- A versao e gerada via `dotnet-gitversion`.
+## Scripts do Taskfile
+- `task run`: build + execucao local da aplicacao
+- `task pack`: empacotamento da extensao
+- `task new-control`: scaffolding de novo control Avalonia (interativo)
+- `task new-view`: scaffolding de nova view Avalonia (interativo)
 
-## Scripts auxiliares
-
-Criar novo control Avalonia:
-
-```sh
-task new-control
-```
-
-Criar nova view Avalonia:
-
-```sh
-task new-view
-```
-
-Os scripts usam `gum` para prompt interativo. Sem `gum`, rode os comandos `dotnet new` manualmente.
+## CI
+Workflow em `.github/workflows/dotnet.yml`:
+- checkout com submodules
+- setup .NET 8
+- `dotnet restore`
+- `dotnet build --no-restore`
+- `dotnet test --no-build`
+- `dotnet test lib/common/Xabbo.Common.sln`
 
 ## Estrutura do repositorio
-
-- `src/Xabbo`: nucleo da extensao (dominio, controllers, servicos, viewmodels)
-- `src/Xabbo.Avalonia`: camada de UI (views, estilos, assets, bootstrap desktop)
-- `lib/common`, `lib/messages`, `lib/gearth`, `lib/core`: submodules do framework xabbo
-- `ext`: metadados e assets de distribuicao da extensao
+- `src/Xabbo`: nucleo da extensao (dominio, controllers, services, viewmodels)
+- `src/Xabbo.Avalonia`: camada de UI (views, styles, assets, bootstrap desktop)
+- `lib/common`, `lib/messages`, `lib/gearth`, `lib/core`: submodules do framework Xabbo
+- `ext`: metadados e assets de distribuicao
 - `.scripts`: automacao local (pack e scaffolding)
 
-## Contribuicao
-
-1. Crie uma branch para sua alteracao.
-2. Rode `dotnet build Xabbo.sln`.
-3. Rode `dotnet test Xabbo.sln`.
-4. Abra um Pull Request com descricao objetiva do que mudou e como validar.
+## Troubleshooting
+- Nao conecta ao G-Earth: valide cookie/porta e se o G-Earth esta ativo.
+- Erros de build em clone novo: rode `git submodule update --init --recursive`.
+- Testes aparentam nao rodar na solucao principal: rode tambem `dotnet test lib/common/Xabbo.Common.sln`.
+- Falha no pack para macOS: verifique se `lipo` esta disponivel no ambiente.
 
 ## Licenca
-
-Distribuido sob licenca MIT. Veja [`LICENSE`](LICENSE).
+Este projeto e distribuido sob a licenca MIT. Veja `LICENSE`.
