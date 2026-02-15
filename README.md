@@ -19,10 +19,18 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/turkosx/red-xabbo">Repositorio</a> |
-  <a href="https://github.com/turkosx/red-xabbo/releases">Releases</a> |
-  <a href="https://github.com/turkosx/red-xabbo/issues">Suporte / Issues</a> |
-  <a href="LICENSE">Licenca</a>
+  <a href="https://github.com/turkosx/red-xabbo">
+    <img src="https://img.shields.io/badge/Repositorio-GitHub-ff3b30?style=flat-square&logo=github&logoColor=ffffff&labelColor=0b0f14" alt="Repositorio" />
+  </a>
+  <a href="https://github.com/turkosx/red-xabbo/releases">
+    <img src="https://img.shields.io/badge/Releases-GitHub-ff3b30?style=flat-square&logo=github&logoColor=ffffff&labelColor=0b0f14" alt="Releases" />
+  </a>
+  <a href="https://github.com/turkosx/red-xabbo/issues">
+    <img src="https://img.shields.io/badge/Suporte-Issues-ff3b30?style=flat-square&logo=github&logoColor=ffffff&labelColor=0b0f14" alt="Suporte" />
+  </a>
+  <a href="LICENSE">
+    <img src="https://img.shields.io/badge/Licenca-MIT-ff3b30?style=flat-square&logo=bookstack&logoColor=ffffff&labelColor=0b0f14" alt="Licenca" />
+  </a>
 </p>
 
 ---
@@ -46,18 +54,27 @@ Compatibilidade:
 ## Requisitos
 Para usar:
 1. G-Earth instalado e funcionando.
-2. `.NET 8 Runtime` instalado:
-https://dotnet.microsoft.com/en-us/download/dotnet/8.0
+2. `.NET 8 Runtime` instalado.
+
+<p>
+  <a href="https://dotnet.microsoft.com/en-us/download/dotnet/8.0">
+    <img src="https://img.shields.io/badge/Download-.NET%208%20Runtime-ff3b30?style=flat-square&logo=dotnet&logoColor=ffffff&labelColor=0b0f14" alt="Download .NET 8 Runtime" />
+  </a>
+</p>
 
 ---
 
-## Instalacao (usuario final)
+## Instalacao
 ### Opcao 1: pelo release oficial
-1. Abra:
-https://github.com/turkosx/red-xabbo/releases
-2. Baixe a versao mais recente.
-3. Importe/instale no G-Earth.
-4. Inicie a extensao `redxabbo`.
+<p>
+  <a href="https://github.com/turkosx/red-xabbo/releases">
+    <img src="https://img.shields.io/badge/Download-Releases-ff3b30?style=flat-square&logo=github&logoColor=ffffff&labelColor=0b0f14" alt="Download Releases" />
+  </a>
+</p>
+
+1. Baixe a versao mais recente.
+2. Importe/instale no G-Earth.
+3. Inicie a extensao `redxabbo`.
 
 ### Opcao 2: pacote pronto
 Se voce recebeu `extension.zip` e `extension.json`:
@@ -118,10 +135,14 @@ Voce pode alterar idioma pelo botao de idioma na interface principal ou pelas co
 ---
 
 ## Suporte
-- Repositorio:
-https://github.com/turkosx/red-xabbo
-- Reportar bugs / pedir melhorias:
-https://github.com/turkosx/red-xabbo/issues
+<p>
+  <a href="https://github.com/turkosx/red-xabbo">
+    <img src="https://img.shields.io/badge/Repositorio-GitHub-ff3b30?style=flat-square&logo=github&logoColor=ffffff&labelColor=0b0f14" alt="Repositorio" />
+  </a>
+  <a href="https://github.com/turkosx/red-xabbo/issues">
+    <img src="https://img.shields.io/badge/Reportar%20problema-Issues-ff3b30?style=flat-square&logo=github&logoColor=ffffff&labelColor=0b0f14" alt="Issues" />
+  </a>
+</p>
 
 ---
 
