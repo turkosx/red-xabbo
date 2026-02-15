@@ -50,6 +50,7 @@ public class GeneralPageViewModel : PageViewModel
     [Reactive] public bool IsMuteExpanded { get; set; } = true;
     [Reactive] public bool IsFurniExpanded { get; set; } = true;
     [Reactive] public bool IsHandItemExpanded { get; set; } = true;
+    [Reactive] public bool IsToolsExpanded { get; set; } = true;
     [Reactive] public bool IsAlertsExpanded { get; set; } = true;
     [Reactive] public bool IsFlashWindowExpanded { get; set; } = true;
     [Reactive] public bool IsMiscExpanded { get; set; } = true;

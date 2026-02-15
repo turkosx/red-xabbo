@@ -304,6 +304,18 @@
         </StackPanel>
       </Expander>
 
+      <!-- Tools -->
+      <Expander Classes="modern" IsExpanded="{Binding IsToolsExpanded}">
+        <Expander.Header>
+          <StackPanel Orientation="Horizontal" Spacing="5">
+            <ic:SymbolIcon Symbol="SelectObject" />
+            <TextBlock Text="{Binding [general.tools]}" />
+          </StackPanel>
+        </Expander.Header>
+        <!-- Content -->
+        <StackPanel />
+      </Expander>
+
       <!-- Alerts -->
       <Expander IsExpanded="{Binding IsAlertsExpanded}" IsVisible="False">
         <Expander.Header>
