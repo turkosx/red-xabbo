@@ -147,6 +147,7 @@ public static class ViewModelLocator
         Splatr.RegisterLazySingleton<AntiWalkComponent>();
         Splatr.RegisterLazySingleton<ClickThroughComponent>();
         Splatr.RegisterLazySingleton<RespectedComponent>();
+        Splatr.RegisterLazySingleton<MimicComponent>();
 
         Splatr.RegisterLazySingleton<ChatComponent>();
         Splatr.RegisterLazySingleton<DoorbellComponent>();

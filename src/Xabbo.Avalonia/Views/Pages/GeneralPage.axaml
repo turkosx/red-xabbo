@@ -6,6 +6,7 @@
   xmlns:ui="using:FluentAvalonia.UI.Controls"
   xmlns:ic="using:FluentIcons.Avalonia.Fluent"
   xmlns:vm="using:Xabbo.ViewModels"
+  xmlns:controls="using:Xabbo.Avalonia.Controls"
   x:DataType="vm:GeneralPageViewModel"
   mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
   x:Class="Xabbo.Avalonia.Views.GeneralPage"
@@ -313,7 +314,69 @@
           </StackPanel>
         </Expander.Header>
         <!-- Content -->
-        <StackPanel />
+        <StackPanel Spacing="8">
+          <StackPanel Orientation="Horizontal" Spacing="10">
+            <Border Width="64" Height="64" Padding="4">
+              <controls:AvatarImage
+                HeadOnly="True"
+                Direction="2"
+                UserName="{Binding Mimic.TargetName}"
+              />
+            </Border>
+            <StackPanel VerticalAlignment="Center" Spacing="2">
+              <TextBlock Text="{Binding [general.tools.mimic.target]}" />
+              <TextBlock
+                IsVisible="{Binding Mimic.HasTarget}"
+                FontWeight="SemiBold"
+                Text="{Binding Mimic.TargetName}"
+              />
+              <TextBlock
+                Classes="modern"
+                IsVisible="{Binding Mimic.ShowNoTarget}"
+                Text="{Binding [general.tools.mimic.noTarget]}"
+              />
+              <TextBlock
+                Classes="modern"
+                IsVisible="{Binding Mimic.ShowSelectingHint}"
+                Text="{Binding [general.tools.mimic.selectHint]}"
+              />
+            </StackPanel>
+          </StackPanel>
+
+          <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto,Auto,Auto">
+            <CheckBox Grid.Row="0" Grid.Column="0" Content="{Binding [general.tools.mimic.figure]}" IsChecked="{Binding Mimic.Figure}" />
+            <CheckBox Grid.Row="0" Grid.Column="1" Content="{Binding [general.tools.mimic.sign]}" IsChecked="{Binding Mimic.Sign}" />
+            <CheckBox Grid.Row="0" Grid.Column="2" Content="{Binding [general.tools.mimic.typing]}" IsChecked="{Binding Mimic.Typing}" />
+
+            <CheckBox Grid.Row="1" Grid.Column="0" Content="{Binding [general.tools.mimic.motto]}" IsChecked="{Binding Mimic.Motto}" />
+            <CheckBox Grid.Row="1" Grid.Column="1" Content="{Binding [general.tools.mimic.effect]}" IsChecked="{Binding Mimic.Effect}" />
+            <CheckBox Grid.Row="1" Grid.Column="2" Content="{Binding [general.tools.mimic.talk]}" IsChecked="{Binding Mimic.Talk}" />
+
+            <CheckBox Grid.Row="2" Grid.Column="0" Content="{Binding [general.tools.mimic.action]}" IsChecked="{Binding Mimic.Action}" />
+            <CheckBox Grid.Row="2" Grid.Column="1" Content="{Binding [general.tools.mimic.sit]}" IsChecked="{Binding Mimic.Sit}" />
+            <CheckBox Grid.Row="2" Grid.Column="2" Content="{Binding [general.tools.mimic.shout]}" IsChecked="{Binding Mimic.Shout}" />
+
+            <CheckBox Grid.Row="3" Grid.Column="0" Content="{Binding [general.tools.mimic.dance]}" IsChecked="{Binding Mimic.Dance}" />
+            <CheckBox Grid.Row="3" Grid.Column="1" Content="{Binding [general.tools.mimic.follow]}" IsChecked="{Binding Mimic.Follow}" />
+            <CheckBox Grid.Row="3" Grid.Column="2" Content="{Binding [general.tools.mimic.whisper]}" IsChecked="{Binding Mimic.Whisper}" />
+          </Grid>
+
+          <Button
+            IsVisible="{Binding Mimic.IsIdle}"
+            Content="{Binding [general.tools.mimic.start]}"
+            Command="{Binding Mimic.StartCmd}"
+          />
+          <Button
+            IsVisible="{Binding Mimic.IsSelecting}"
+            Content="{Binding [general.tools.mimic.cancel]}"
+            Command="{Binding Mimic.CancelCmd}"
+          />
+          <Button
+            IsVisible="{Binding Mimic.IsActive}"
+            Content="{Binding [general.tools.mimic.stop]}"
+            Command="{Binding Mimic.StopCmd}"
+          />
+        </StackPanel>
       </Expander>
 
       <!-- Alerts -->

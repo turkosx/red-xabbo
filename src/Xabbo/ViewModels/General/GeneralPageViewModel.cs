@@ -73,4 +73,5 @@ public class GeneralPageViewModel : PageViewModel
     [DependencyInjectionProperty] public AvatarOverlayComponent? Overlay { get; set; }
     [DependencyInjectionProperty] public AntiHcGiftNotificationComponent? AntiHcNotification { get; set; }
     [DependencyInjectionProperty] public LightingComponent? Lighting { get; set; }
+    [DependencyInjectionProperty] public MimicComponent? Mimic { get; set; }
 }
