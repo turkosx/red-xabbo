@@ -1,0 +1,139 @@
+<UserControl
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:sys="using:System"
+  xmlns:ui="using:FluentAvalonia.UI.Controls"
+  xmlns:ic="using:FluentIcons.Avalonia.Fluent"
+  xmlns:icm="using:FluentIcons.Avalonia.Fluent.MarkupExtensions"
+  xmlns:controls="using:Xabbo.Avalonia.Controls"
+  xmlns:v="using:Xabbo.Avalonia.Views"
+  xmlns:vm="using:Xabbo.ViewModels"
+  mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+  x:Class="Xabbo.Avalonia.Views.SettingsPageView"
+  x:Name="SettingsPageViewRoot"
+  x:DataType="vm:SettingsPageViewModel"
+  Classes="pageRoot"
+>
+  <UserControl.Resources>
+    <sys:Int32 x:Key="IntervalRounding">10</sys:Int32>
+  </UserControl.Resources>
+  <ScrollViewer Classes="pageScroll">
+    <StackPanel Margin="14" Spacing="12">
+      <!-- Chat -->
+      <ui:SettingsExpander
+        Header="{Binding ChatLogHeader}"
+        IconSource="{icm:SymbolIconSource Symbol=Chat}"
+      >
+        <ui:SettingsExpanderItem>
+          <StackPanel Spacing="6">
+            <TextBlock Margin="0,0,12,0" VerticalAlignment="Center" Text="{Binding [settings.chat.messages]}" />
+            <WrapPanel Margin="0,4,0,0">
+              <CheckBox IsChecked="{Binding Config.Chat.Log.Normal}" Content="{Binding [settings.chat.users]}" />
+              <CheckBox IsChecked="{Binding Config.Chat.Log.Whispers}" Content="{Binding [settings.chat.whispers]}" />
+              <CheckBox IsChecked="{Binding Config.Chat.Log.Wired}" Content="{Binding [settings.chat.wired]}" />
+              <CheckBox IsChecked="{Binding Config.Chat.Log.Pets}" Content="{Binding [settings.chat.pets]}" />
+              <CheckBox IsChecked="{Binding Config.Chat.Log.Bots}" Content="{Binding [settings.chat.bots]}" />
+              <CheckBox IsChecked="{Binding Config.Chat.Log.Trades}" Content="{Binding [settings.chat.trades]}" />
+              <CheckBox IsChecked="{Binding Config.Chat.Log.UserEntry}" Content="{Binding [settings.chat.userEntry]}" />
+            </WrapPanel>
+          </StackPanel>
+        </ui:SettingsExpanderItem>
+      </ui:SettingsExpander>
+      <!-- Timing (modern) -->
+      <ui:SettingsExpander
+        Classes="modern"
+        Header="{Binding TimingHeader}"
+        IconSource="{icm:SymbolIconSource Symbol=Timer}"
+        Description="{Binding TimingDescription}"
+      >
+        <controls:TimingSlider
+          Text="{Binding [settings.timing.userModerationInterval]}"
+          Tip="{Binding [settings.timing.userModerationTip]}"
+          Value="{Binding Config.Timing.Modern.ModerationInterval}"
+        />
+        <controls:TimingSlider
+          Text="{Binding [settings.timing.bounceUnbanDelay]}"
+          Tip="{Binding [settings.timing.bounceUnbanDelayTip]}"
+          Value="{Binding Config.Timing.Modern.BounceUnbanDelay}"
+        />
+        <controls:TimingSlider
+          Text="{Binding [settings.timing.furniPlacementInterval]}"
+          Tip="{Binding [settings.timing.furniPlacementTip]}"
+          Value="{Binding Config.Timing.Modern.FurniPlaceInterval}"
+        />
+        <controls:TimingSlider
+          Text="{Binding [settings.timing.furniPickupInterval]}"
+          Tip="{Binding [settings.timing.furniPickupTip]}"
+          Value="{Binding Config.Timing.Modern.FurniPickupInterval}"
+        />
+        <controls:TimingSlider
+          Text="{Binding [settings.timing.furniToggleInterval]}"
+          Tip="{Binding [settings.timing.furniToggleTip]}"
+          Value="{Binding Config.Timing.Modern.FurniToggleInterval}"
+        />
+        <controls:TimingSlider
+          Text="{Binding [settings.timing.furniMoveInterval]}"
+          Tip="{Binding [settings.timing.furniMoveTip]}"
+          Value="{Binding Config.Timing.Modern.FurniMoveInterval}"
+        />
+      </ui:SettingsExpander>
+      <!-- Timing (Origins) -->
+      <ui:SettingsExpander
+        Classes="origins"
+        Header="{Binding TimingHeader}"
+        IconSource="{icm:SymbolIconSource Symbol=Timer}"
+        Description="{Binding TimingDescription}"
+      >
+        <controls:TimingSlider
+          Text="{Binding [settings.timing.userModerationInterval]}"
+          Tip="{Binding [settings.timing.userModerationTip]}"
+          Value="{Binding Config.Timing.Origins.ModerationInterval}"
+        />
+        <controls:TimingSlider
+          Text="{Binding [settings.timing.furniPlacementInterval]}"
+          Tip="{Binding [settings.timing.furniPlacementTip]}"
+          Value="{Binding Config.Timing.Origins.FurniPlaceInterval}"
+        />
+        <controls:TimingSlider
+          Text="{Binding [settings.timing.furniPickupInterval]}"
+          Tip="{Binding [settings.timing.furniPickupTip]}"
+          Value="{Binding Config.Timing.Origins.FurniPickupInterval}"
+        />
+        <controls:TimingSlider
+          Text="{Binding [settings.timing.furniToggleInterval]}"
+          Tip="{Binding [settings.timing.furniToggleTip]}"
+          Value="{Binding Config.Timing.Origins.FurniToggleInterval}"
+        />
+        <controls:TimingSlider
+          Text="{Binding [settings.timing.furniMoveInterval]}"
+          Tip="{Binding [settings.timing.furniMoveTip]}"
+          Value="{Binding Config.Timing.Origins.FurniMoveInterval}"
+        />
+        <controls:TimingSlider
+          Text="{Binding [settings.timing.tradeOfferInterval]}"
+          Tip="{Binding [settings.timing.tradeOfferTip]}"
+          Value="{Binding Config.Timing.Origins.TradeOfferInterval}"
+        />
+      </ui:SettingsExpander>
+      <ui:SettingsExpander
+        Header="{Binding RoomFurniViewHeader}"
+        IconSource="{icm:SymbolIconSource Symbol=Couch}"
+      >
+        <controls:TimingSlider
+          Text="{Binding [settings.roomFurni.refreshInterval]}"
+          Description="{Binding [settings.roomFurni.refreshIntervalDescription]}"
+          Value="{Binding Config.View.Furni.RefreshIntervalMs}"
+        />
+      </ui:SettingsExpander>
+      <ui:SettingsExpander
+        Header="{Binding DebugHeader}"
+        IsVisible="{DynamicResource IsDebug}"
+        IconSource="{icm:SymbolIconSource Symbol=Bug}"
+      >
+        <CheckBox IsChecked="{Binding Config.General.PrivacyMode}" Content="{Binding [settings.debug.privacyMode]}" />
+      </ui:SettingsExpander>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

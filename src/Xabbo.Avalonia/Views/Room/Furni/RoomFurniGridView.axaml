@@ -1,0 +1,128 @@
+﻿<UserControl
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:sys="clr-namespace:System;assembly=mscorlib"
+  xmlns:ic="using:FluentIcons.Avalonia.Fluent"
+  xmlns:ui="using:FluentAvalonia.UI.Controls"
+  xmlns:img="using:AsyncImageLoader"
+  xmlns:controls="using:Xabbo.Avalonia.Controls"
+  xmlns:services="using:Xabbo.Avalonia.Services"
+  xmlns:v="using:Xabbo.Avalonia.Views"
+  xmlns:vm="using:Xabbo.ViewModels"
+  mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+  x:Class="Xabbo.Avalonia.Views.RoomFurniGridView"
+  x:DataType="vm:RoomFurniViewModel"
+  Classes="pageRoot"
+>
+  <UserControl.Styles>
+    <Style Selector="Border.Btn">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="Border.Btn:pointerover">
+      <Setter Property="Background" Value="{DynamicResource ListViewItemBackgroundPointerOver}" />
+    </Style>
+    <Style Selector="SplitButton:checked /template/ Button#PART_PrimaryButton">
+      <Setter Property="IsHitTestVisible" Value="false" />
+    </Style>
+  </UserControl.Styles>
+  <Grid RowDefinitions="Auto,*">
+    <controls:InfoOverlay Grid.RowSpan="2" Text="{Binding EmptyStatusGrid}" />
+    <DockPanel>
+      <controls:BoundToggleSplitButton
+        DockPanel.Dock="Right"
+        Margin="0,0,10,10"
+        Padding="5"
+        IsChecked="{Binding IsAutoRefreshEnabled, Mode=OneWay}"
+        IsEnabled="{Binding IsDynamicFilterEnabled}"
+        Command="{Binding RefreshCmd}"
+      >
+        <SplitButton.Flyout>
+          <ui:FAMenuFlyout Placement="Bottom">
+            <ui:ToggleMenuFlyoutItem
+              Text="{Binding [room.furni.list.autoRefresh]}"
+              IsChecked="{Binding IsAutoRefreshEnabled}"
+            />
+          </ui:FAMenuFlyout>
+        </SplitButton.Flyout>
+        <ic:SymbolIcon
+          Symbol="ArrowSync"
+          HorizontalAlignment="Center"
+          VerticalAlignment="Center"
+        />
+      </controls:BoundToggleSplitButton>
+      <Button
+        DockPanel.Dock="Right"
+        Margin="0,0,10,10"
+        Padding="5"
+        Command="{Binding SelectFilterAreaCmd}"
+        Classes.accent="{Binding FilterArea, Converter={x:Static ObjectConverters.IsNotNull}}"
+      >
+        <ic:SymbolIcon
+          Symbol="SelectObject"
+          HorizontalAlignment="Center"
+          VerticalAlignment="Center"
+        />
+      </Button>
+      <TextBox
+        Margin="10,0,10,10"
+        Classes="clearButton"
+        Watermark="{Binding [room.furni.list.filter]}"
+        Text="{Binding FilterText}"
+      />
+    </DockPanel>
+    <ScrollViewer Grid.Row="1" Classes="pageScroll" Margin="0" Padding="8">
+      <ItemsRepeater x:Name="FurniStacks" ItemsSource="{Binding Stacks}">
+        <ItemsRepeater.Layout>
+          <UniformGridLayout />
+        </ItemsRepeater.Layout>
+        <ItemsRepeater.ItemTemplate>
+          <DataTemplate DataType="vm:FurniStackViewModel">
+            <Border
+              Classes="Btn"
+              Margin="2"
+              Width="60" Height="60"
+              CornerRadius="4"
+              BorderThickness="1"
+              BorderBrush="{DynamicResource PremiumCardStrokeBrush}"
+            >
+              <ToolTip.Tip>
+                <v:FurniPopupView ShowIcon="False" />
+              </ToolTip.Tip>
+              <Panel>
+                <TextBlock
+                  Text="{Binding Name, Converter={StaticResource FirstLetterConverter}}"
+                  FontSize="20"
+                  Opacity="0.33"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                >
+                  <TextBlock.IsVisible>
+                    <MultiBinding Converter="{x:Static BoolConverters.And}">
+                      <Binding Path="!#FurniIconImage.IsLoading" />
+                      <Binding Path="#FurniIconImage.CurrentImage" Converter="{x:Static ObjectConverters.IsNull}" />
+                    </MultiBinding>
+                  </TextBlock.IsVisible>
+                </TextBlock>
+                <controls:FurniIconImage x:Name="FurniIconImage" Icon="{Binding Icon}" />
+                <!--
+                  The opacity binding here prevents some weird visual bug when updating the filter,
+                  do not change it. May have something to do with the ItemsRepeater.
+                -->
+                <ui:InfoBadge
+                  Opacity="{Binding ShowCount, Converter={StaticResource BoolToOpacityConverter}, ConverterParameter=1;0}"
+                  Margin="4"
+                  HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                  Classes="Informational"
+                  Value="{Binding FilteredCount}"
+                />
+              </Panel>
+            </Border>
+          </DataTemplate>
+        </ItemsRepeater.ItemTemplate>
+      </ItemsRepeater>
+    </ScrollViewer>
+  </Grid>
+</UserControl>
+

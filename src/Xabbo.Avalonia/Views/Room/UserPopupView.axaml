@@ -1,0 +1,33 @@
+<UserControl
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:controls="using:Xabbo.Avalonia.Controls"
+  xmlns:services="using:Xabbo.Avalonia.Services"
+  xmlns:c="using:Xabbo.Avalonia.Converters"
+  xmlns:vm="using:Xabbo.ViewModels"
+  mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+  x:Class="Xabbo.Avalonia.Views.UserPopupView"
+  x:DataType="vm:AvatarViewModel"
+  FontSize="16"
+>
+  <Grid ColumnDefinitions="Auto,*">
+    <controls:AvatarImage FigureString="{Binding ModernFigure}" />
+    <StackPanel Grid.Column="1">
+      <TextBlock Classes="privacy" FontWeight="Bold" Text="{Binding Name}" />
+      <TextBlock>
+        <TextBlock.Text>
+          <Binding Path="Motto" Mode="OneWay">
+            <Binding.Converter>
+              <c:MultiValueConverter>
+                <c:HabboStringConverter />
+                <c:WhitespaceNewlineConverter Threshold="5" />
+              </c:MultiValueConverter>
+            </Binding.Converter>
+          </Binding>
+        </TextBlock.Text>
+      </TextBlock>
+    </StackPanel>
+  </Grid>
+</UserControl>

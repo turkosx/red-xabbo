@@ -1,0 +1,359 @@
+<UserControl
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:ui="using:FluentAvalonia.UI.Controls"
+  xmlns:ic="using:FluentIcons.Avalonia.Fluent"
+  xmlns:vm="using:Xabbo.ViewModels"
+  x:DataType="vm:GeneralPageViewModel"
+  mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+  x:Class="Xabbo.Avalonia.Views.GeneralPage"
+  Classes="pageRoot"
+  Padding="10"
+>
+  <Design.DataContext>
+    <vm:GeneralPageViewModel />
+  </Design.DataContext>
+  <UserControl.Resources>
+     <Thickness x:Key="ExpanderHeaderPadding">10,5,0,5</Thickness>
+     <x:Double x:Key="ExpanderMinHeight">0</x:Double>
+     <Thickness x:Key="ExpanderContentPadding">10,5</Thickness>
+  </UserControl.Resources>
+  <UserControl.Styles>
+    <Style Selector=":is(Control)">
+      <Setter Property="ToolTip.ShowDelay" Value="800" />
+    </Style>
+  </UserControl.Styles>
+  <ScrollViewer
+    Classes="pageScroll"
+    VerticalScrollBarVisibility="Auto"
+    IsScrollInertiaEnabled="True"
+  >
+    <StackPanel Spacing="12">
+      <!-- Room -->
+      <Expander IsExpanded="{Binding IsRoomExpanded}">
+        <Expander.Header>
+          <StackPanel Orientation="Horizontal" Spacing="5">
+            <ic:SymbolIcon Symbol="Home" />
+            <TextBlock Text="{Binding [general.room]}" />
+          </StackPanel>
+        </Expander.Header>
+        <!-- Content -->
+        <StackPanel Spacing="10">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <TextBlock Margin="0,0,10,0" VerticalAlignment="Center" Text="{Binding [general.anti]}" />
+            <CheckBox
+              Content="{Binding [general.anti.idle]}"
+              ToolTip.Tip="{Binding [general.anti.idleTip]}"
+              IsChecked="{Binding Config.General.AntiIdle}"
+            />
+            <CheckBox
+              Content="{Binding [general.anti.idleOut]}"
+              Classes="modern"
+              ToolTip.Tip="{Binding [general.anti.idleOutTip]}"
+              IsEnabled="{Binding !Config.General.AntiIdle}"
+              IsChecked="{Binding Config.General.AntiIdleOut}"
+            />
+            <CheckBox
+              Content="{Binding [general.anti.trade]}"
+              ToolTip.Tip="{Binding [general.anti.tradeTip]}"
+              IsChecked="{Binding Config.General.AntiTrade}"
+              IsEnabled="{Binding AntiTrade.IsAvailable}"
+            />
+          </StackPanel>
+          <Expander
+            Margin="0,5"
+            IsExpanded="{Binding IsMovementExpanded}"
+          >
+            <Expander.Header>
+              <StackPanel Orientation="Horizontal" Spacing="5">
+                <ic:SymbolIcon Symbol="Accessibility" />
+                <TextBlock Text="{Binding [general.movement]}" />
+              </StackPanel>
+            </Expander.Header>
+            <StackPanel Spacing="8">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <CheckBox
+                  Content="{Binding [general.movement.noTurn]}"
+                  ToolTip.Tip="{Binding [general.movement.noTurnTip]}"
+                  IsChecked="{Binding Config.Movement.NoTurn}"
+                />
+                <CheckBox
+                  Content="{Binding [general.movement.noTurnExceptReselect]}"
+                  IsEnabled="{Binding Config.Movement.NoTurn}"
+                  IsChecked="{Binding Config.Movement.TurnOnReselectUser}"
+                />
+              </StackPanel>
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <CheckBox
+                  Content="{Binding [general.movement.noWalk]}"
+                  IsChecked="{Binding Config.Movement.NoWalk}"
+                />
+                <CheckBox
+                  Content="{Binding [general.movement.turnTowardsClickedTile]}"
+                  IsEnabled="{Binding Config.Movement.NoWalk}"
+                  IsChecked="{Binding Config.Movement.TurnTowardsClickedTile}"
+                />
+              </StackPanel>
+              <CheckBox
+                Content="{Binding [general.movement.clickThroughUsers]}"
+                Classes="modern"
+                ToolTip.ShowDelay="100"
+                ToolTip.Tip="{Binding [general.movement.clickThroughUsersTip]}"
+                IsChecked="{Binding ClickThrough.Enabled}"
+              />
+            </StackPanel>
+          </Expander>
+          <Expander
+            Margin="0,5"
+            IsExpanded="{Binding IsClickToExpanded}"
+          >
+            <Expander.Header>
+              <CheckBox IsChecked="{Binding ClickTo.Enabled}">
+                <StackPanel Orientation="Horizontal" Spacing="5">
+                  <ic:SymbolIcon Symbol="CursorClick" />
+                  <TextBlock Text="{Binding [general.clickTo]}" />
+                </StackPanel>
+              </CheckBox>
+            </Expander.Header>
+            <StackPanel Spacing="8">
+              <StackPanel Classes="modern" Orientation="Horizontal" Spacing="8">
+                <RadioButton
+                  GroupName="ClickTo"
+                  Content="{Binding [general.clickTo.muteFor]}"
+                  IsChecked="{Binding ClickTo.Mute}"
+                />
+                <NumericUpDown
+                  Minimum="0" Maximum="500"
+                  Width="150"
+                  Margin="0,0,10,0"
+                  Value="{Binding ClickTo.MuteValue}"
+                />
+                <RadioButton
+                  GroupName="ClickToMute"
+                  Content="{Binding [general.clickTo.minutes]}"
+                  IsChecked="{Binding ClickTo.MuteInMinutes}"
+                />
+                <RadioButton
+                  GroupName="ClickToMute"
+                  Content="{Binding [general.clickTo.hours]}"
+                  IsChecked="{Binding ClickTo.MuteInHours}"
+                />
+              </StackPanel>
+              <RadioButton
+                GroupName="ClickTo"
+                Content="{Binding [general.clickTo.kick]}"
+                IsChecked="{Binding ClickTo.Kick}"
+              />
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <RadioButton
+                  GroupName="ClickTo"
+                  Content="{Binding [general.clickTo.banFor]}"
+                  IsChecked="{Binding ClickTo.Ban}"
+                />
+                <RadioButton
+                  GroupName="ClickToBan"
+                  Content="{Binding [general.clickTo.banHour]}"
+                  IsChecked="{Binding ClickTo.BanHour}"
+                />
+                <RadioButton
+                  GroupName="ClickToBan"
+                  Content="{Binding [general.clickTo.banDay]}"
+                  IsChecked="{Binding ClickTo.BanDay}"
+                />
+                <RadioButton
+                  GroupName="ClickToBan"
+                  Content="{Binding [general.clickTo.banPermanent]}"
+                  IsChecked="{Binding ClickTo.BanPerm}"
+                />
+              </StackPanel>
+              <RadioButton
+                Classes="modern"
+                GroupName="ClickTo"
+                Content="{Binding [general.clickTo.bounce]}"
+                IsChecked="{Binding ClickTo.Bounce}"
+                ToolTip.Tip="{Binding [general.clickTo.bounceTip]}"
+              />
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock
+                  Margin="0,0,10,0"
+                  VerticalAlignment="Center"
+                  Text="{Binding [general.clickTo.exclude]}"
+                />
+                <CheckBox
+                  Content="{Binding [general.clickTo.friends]}"
+                  IsChecked="{Binding Config.General.ClickToIgnoresFriends}"
+                />
+              </StackPanel>
+            </StackPanel>
+          </Expander>
+          <Expander
+            Margin="0,5"
+            IsExpanded="{Binding IsEntryExpanded}"
+          >
+            <Expander.Header>
+              <StackPanel Orientation="Horizontal" Spacing="5">
+                <ic:SymbolIcon Symbol="DoorArrowLeft" />
+                <TextBlock Text="{Binding [general.entry]}" />
+              </StackPanel>
+            </Expander.Header>
+            <StackPanel>
+              <CheckBox
+                Content="{Binding [general.entry.rememberPasswords]}"
+                IsChecked="{Binding Config.Room.RememberPasswords}"
+              />
+              <CheckBox
+                Content="{Binding [general.entry.autoAcceptFriendsDoor]}"
+                IsChecked="{Binding Config.Room.AcceptFriendsAtDoor}"
+              />
+            </StackPanel>
+          </Expander>
+          <CheckBox
+            Content="{Binding [general.room.flattenFloorPlan]}"
+            Classes="modern"
+            IsChecked="{Binding Flatten.Enabled}"
+          />
+          <CheckBox
+            Content="{Binding [general.room.showSelfThroughFurni]}"
+            Classes="modern"
+            IsChecked="{Binding Overlay.Enabled}"
+          />
+          <CheckBox
+            Content="{Binding [general.room.hideAllAvatars]}"
+            IsChecked="{Binding Avatars.HideAvatars}"
+          />
+        </StackPanel>
+      </Expander>
+
+      <!-- Chat -->
+      <Expander IsExpanded="{Binding IsChatExpanded}">
+        <Expander.Header>
+          <StackPanel Orientation="Horizontal" Spacing="5">
+            <ic:SymbolIcon Symbol="Chat" />
+            <TextBlock Text="{Binding [general.chat]}" />
+          </StackPanel>
+        </Expander.Header>
+        <!-- Content -->
+        <StackPanel>
+          <CheckBox
+            Content="{Binding [general.chat.noTypingIndicator]}"
+            Classes="modern"
+            IsChecked="{Binding Config.General.AntiTyping}"
+          />
+          <CheckBox
+            Content="{Binding [general.chat.alwaysShout]}"
+            IsChecked="{Binding Config.Chat.AlwaysShout}"
+          />
+          <Expander
+            Margin="0,5,0,5"
+            IsExpanded="{Binding IsMuteExpanded}"
+          >
+            <Expander.Header>
+              <StackPanel Orientation="Horizontal" Spacing="5">
+                <ic:SymbolIcon Symbol="ChatOff" />
+                <TextBlock Text="{Binding [general.chat.mute]}" />
+              </StackPanel>
+            </Expander.Header>
+            <WrapPanel>
+              <CheckBox x:Name="MuteAll" Content="{Binding [general.chat.mute.all]}" IsChecked="{Binding Config.Chat.MuteAll}" />
+              <CheckBox Content="{Binding [general.chat.mute.bots]}" IsEnabled="{Binding !#MuteAll.IsChecked}" IsChecked="{Binding Config.Chat.MuteBots}" />
+              <CheckBox Content="{Binding [general.chat.mute.pets]}" IsEnabled="{Binding !#MuteAll.IsChecked}" IsChecked="{Binding Config.Chat.MutePets}" />
+              <CheckBox Content="{Binding [general.chat.mute.petCommands]}" Classes="modern" IsEnabled="{Binding !#MuteAll.IsChecked}" IsChecked="{Binding Config.Chat.MutePetCommands}" />
+              <CheckBox Content="{Binding [general.chat.mute.wiredMessages]}" Classes="modern" IsEnabled="{Binding !#MuteAll.IsChecked}" IsChecked="{Binding Config.Chat.MuteWired}" />
+              <CheckBox Content="{Binding [general.chat.mute.respects]}" Classes="modern" IsEnabled="{Binding !#MuteAll.IsChecked}" IsChecked="{Binding Config.Chat.MuteRespects}" />
+              <CheckBox Content="{Binding [general.chat.mute.scratches]}" Classes="modern" IsEnabled="{Binding !#MuteAll.IsChecked}" IsChecked="{Binding Config.Chat.MuteScratches}" />
+            </WrapPanel>
+          </Expander>
+          <CheckBox Content="{Binding [general.chat.showWhoRespected]}" Classes="modern" IsChecked="{Binding Respected.ShowWhoRespected}" />
+          <CheckBox Content="{Binding [general.chat.showTotalRespectCount]}" Classes="modern" IsChecked="{Binding Respected.ShowTotalRespects}" />
+        </StackPanel>
+      </Expander>
+
+      <!-- Furni -->
+      <Expander IsExpanded="{Binding IsFurniExpanded}">
+        <Expander.Header>
+          <StackPanel Orientation="Horizontal" Spacing="5">
+            <ic:SymbolIcon Symbol="Couch" />
+            <TextBlock Text="{Binding [general.furni]}" />
+          </StackPanel>
+        </Expander.Header>
+        <!-- Content -->
+        <StackPanel>
+          <CheckBox Content="{Binding [general.furni.preventUse]}" IsChecked="{Binding Furni.PreventUse}" />
+          <CheckBox Content="{Binding [general.furni.ctrlClickShowInfo]}" IsChecked="{Binding Furni.PickToShowInfo}" />
+          <CheckBox Classes="modern" Content="{Binding [general.furni.ctrlClickMarketStats]}" IsChecked="{Binding Furni.PickToFetchMarketplaceStats}" />
+          <CheckBox Content="{Binding [general.furni.ctrlClickHide]}" IsChecked="{Binding Furni.PickToHide}" />
+          <CheckBox Content="{Binding [general.furni.ctrlClickTeleFindLink]}" IsChecked="{Binding Furni.PickToFindLink}" />
+        </StackPanel>
+      </Expander>
+
+      <!-- Hand item -->
+      <Expander Classes="modern" IsExpanded="{Binding IsHandItemExpanded}">
+        <Expander.Header>
+          <StackPanel Orientation="Horizontal" Spacing="5">
+            <ic:SymbolIcon Symbol="HandRight" />
+            <TextBlock Text="{Binding [general.handItem]}" />
+          </StackPanel>
+        </Expander.Header>
+        <!-- Content -->
+        <StackPanel>
+          <CheckBox Content="{Binding [general.handItem.dropReceived]}" IsChecked="{Binding HandItem.DropHandItem}" />
+          <CheckBox Content="{Binding [general.handItem.returnReceived]}" IsChecked="{Binding HandItem.ReturnHandItem}" />
+          <CheckBox Content="{Binding [general.handItem.maintainDirection]}" IsChecked="{Binding HandItem.ShouldMaintainDirection}" />
+        </StackPanel>
+      </Expander>
+
+      <!-- Alerts -->
+      <Expander IsExpanded="{Binding IsAlertsExpanded}" IsVisible="False">
+        <Expander.Header>
+          <StackPanel Orientation="Horizontal" Spacing="5">
+            <ic:SymbolIcon Symbol="Alert" />
+            <TextBlock Text="{Binding [general.alerts]}" />
+          </StackPanel>
+        </Expander.Header>
+        <!-- Content -->
+        <Expander
+          Header="{Binding [general.alerts.flashWindow]}"
+          IsExpanded="{Binding IsFlashWindowExpanded}"
+        >
+          <WrapPanel>
+            <CheckBox Content="{Binding [general.alerts.whisper]}" />
+            <CheckBox Content="{Binding [general.alerts.userChat]}" />
+            <CheckBox Content="{Binding [general.alerts.friendChat]}" />
+            <CheckBox Content="{Binding [general.alerts.userEntered]}" />
+            <CheckBox Content="{Binding [general.alerts.friendEntered]}" />
+            <CheckBox Content="{Binding [general.alerts.privateMessage]}" />
+          </WrapPanel>
+        </Expander>
+      </Expander>
+
+      <!-- Misc -->
+      <Expander Classes="modern" IsExpanded="{Binding IsMiscExpanded}">
+        <Expander.Header>
+          <StackPanel Orientation="Horizontal" Spacing="5">
+            <ic:SymbolIcon Symbol="GridDots" />
+            <TextBlock Text="{Binding [general.misc]}" />
+          </StackPanel>
+        </Expander.Header>
+        <!-- Content -->
+        <StackPanel Spacing="10">
+          <CheckBox Content="{Binding [general.misc.blockHcGiftNotification]}" IsChecked="{Binding AntiHcNotification.Enabled}" />
+          <StackPanel Orientation="Horizontal" Spacing="10">
+            <ColorPicker
+              IsEnabled="{Binding Lighting.IsTonerAvailable}"
+              Color="{Binding Lighting.TonerColor, Converter={StaticResource HslU8Converter}}"
+            />
+            <CheckBox
+              IsEnabled="{Binding Lighting.IsTonerAvailable}"
+              IsChecked="{Binding Lighting.IsTonerActive}"
+              VerticalAlignment="Center"
+              Content="{Binding [general.misc.backgroundToner]}"
+            />
+          </StackPanel>
+        </StackPanel>
+      </Expander>
+    </StackPanel>
+
+  </ScrollViewer>
+</UserControl>

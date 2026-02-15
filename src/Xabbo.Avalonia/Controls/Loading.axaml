@@ -1,0 +1,115 @@
+<ResourceDictionary
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:controls="using:Xabbo.Avalonia.Controls"
+  xmlns:ui="using:FluentAvalonia.UI.Controls"
+>
+  <Design.PreviewWith>
+    <StackPanel Width="400" Spacing="10">
+        <StackPanel Background="{DynamicResource SystemRegionBrush}">
+          <controls:Overlay />
+        </StackPanel>
+    </StackPanel>
+  </Design.PreviewWith>
+
+  <ControlTheme x:Key="{x:Type controls:Loading}" TargetType="controls:Loading">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid x:Name="PART_Root" Classes.loading="{TemplateBinding IsLoading}">
+          <Grid.Styles>
+            <Style Selector="Grid#PART_Overlay">
+              <Setter Property="Opacity" Value="1"/>
+              <Setter Property="Transitions">
+                <Transitions>
+                  <DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
+                </Transitions>
+              </Setter>
+            </Style>
+            <Style Selector=":not(.loading)">
+              <Style Selector="^ ContentPresenter#PART_Content">
+                <Setter Property="Transitions">
+                  <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="{Binding FadeOutDuration, RelativeSource={RelativeSource TemplatedParent}}" />
+                  </Transitions>
+                </Setter>
+                <Setter Property="Opacity" Value="1" />
+              </Style>
+              <Style Selector="^ Grid#PART_Overlay">
+                <Setter Property="Opacity" Value="0"/>
+              </Style>
+              <Style Selector="^ StackPanel#PART_LoadingContent">
+                <Setter Property="Transitions">
+                  <Transitions>
+                    <DoubleTransition Property="Opacity" Delay="0:0:0" Duration="0:0:0"/>
+                  </Transitions>
+                </Setter>
+                <Setter Property="Opacity" Value="0"/>
+              </Style>
+            </Style>
+            <Style Selector=".loading">
+              <Style Selector="^ ContentPresenter#PART_Content">
+                <Setter Property="Transitions">
+                  <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="{Binding FadeInDuration, RelativeSource={RelativeSource TemplatedParent}}" />
+                  </Transitions>
+                </Setter>
+                <Setter Property="Opacity" Value="{Binding ContentFadeOpacity, RelativeSource={RelativeSource TemplatedParent}}" />
+                <Setter Property="IsHitTestVisible" Value="False" />
+              </Style>
+              <Style Selector="^ Grid#PART_Overlay">
+                <Setter Property="Opacity" Value="1"/>
+              </Style>
+              <Style Selector="^ StackPanel#PART_LoadingContent">
+                <Setter Property="Transitions">
+                  <Transitions>
+                    <DoubleTransition Property="Opacity" Delay="0:0:0.4" Duration="0:0:0.3"/>
+                  </Transitions>
+                </Setter>
+                <Setter Property="Opacity" Value="1"/>
+              </Style>
+            </Style>
+          </Grid.Styles>
+          <!-- Main content -->
+          <ContentPresenter
+            x:Name="PART_Content"
+            Content="{TemplateBinding Content}"
+            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+          />
+          <!-- Overlay -->
+          <Grid x:Name="PART_Overlay" IsHitTestVisible="{TemplateBinding IsLoading}">
+            <StackPanel
+              x:Name="PART_LoadingContent"
+              Margin="20"
+              Spacing="10"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Center"
+            >
+              <ui:ProgressRing Width="32" Height="32" />
+              <ContentPresenter
+                x:Name="PART_LoadingContentPresenter"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                TextElement.FontSize="16"
+                Content="{TemplateBinding LoadingContent}"
+              >
+                <ContentPresenter.Styles>
+                  <Style Selector="TextBlock">
+                    <Setter Property="TextAlignment" Value="Center" />
+                    <Setter Property="TextWrapping" Value="Wrap" />
+                  </Style>
+                </ContentPresenter.Styles>
+              </ContentPresenter>
+              <Button
+                HorizontalAlignment="Center"
+                IsVisible="{TemplateBinding CancelCommand, Converter={x:Static ObjectConverters.IsNotNull}}"
+                Command="{TemplateBinding CancelCommand}"
+                Content="Cancel"
+              />
+            </StackPanel>
+          </Grid>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+</ResourceDictionary>

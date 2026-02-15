@@ -1,0 +1,182 @@
+﻿<UserControl
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:ui="using:FluentAvalonia.UI.Controls"
+  xmlns:ic="using:FluentIcons.Avalonia.Fluent"
+  xmlns:icm="using:FluentIcons.Avalonia.Fluent.MarkupExtensions"
+  xmlns:xc="using:Xabbo.Core"
+  xmlns:controls="using:Xabbo.Avalonia.Controls"
+  xmlns:v="using:Xabbo.Avalonia.Views"
+  xmlns:vm="using:Xabbo.ViewModels"
+  mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+  x:Class="Xabbo.Avalonia.Views.RoomFurniListView"
+  x:DataType="vm:RoomFurniViewModel"
+  Classes="pageRoot"
+>
+  <UserControl.Styles>
+    <Style Selector=".icononly TextBlock">
+      <Setter Property="IsVisible" Value="false" />
+    </Style>
+    <Style Selector="SplitButton:checked /template/ Button#PART_PrimaryButton">
+      <Setter Property="IsHitTestVisible" Value="false" />
+    </Style>
+  </UserControl.Styles>
+  <Grid RowDefinitions="Auto,*">
+    <controls:InfoOverlay Grid.RowSpan="2" Text="{Binding EmptyStatus}" />
+    <DockPanel>
+      <controls:BoundToggleSplitButton
+        DockPanel.Dock="Right"
+        Margin="0,0,10,10"
+        Padding="5"
+        IsChecked="{Binding IsAutoRefreshEnabled, Mode=OneWay}"
+        IsEnabled="{Binding IsDynamicFilterEnabled}"
+        Command="{Binding RefreshCmd}"
+      >
+        <SplitButton.Flyout>
+          <ui:FAMenuFlyout Placement="Bottom">
+            <ui:ToggleMenuFlyoutItem
+              Text="{Binding [room.furni.list.autoRefresh]}"
+              IsChecked="{Binding IsAutoRefreshEnabled}"
+            />
+          </ui:FAMenuFlyout>
+        </SplitButton.Flyout>
+        <ic:SymbolIcon
+          Symbol="ArrowSync"
+          HorizontalAlignment="Center"
+          VerticalAlignment="Center"
+        />
+      </controls:BoundToggleSplitButton>
+      <Button
+        DockPanel.Dock="Right"
+        Margin="0,0,10,10"
+        Padding="5"
+        Command="{Binding SelectFilterAreaCmd}"
+        Classes.accent="{Binding FilterArea, Converter={x:Static ObjectConverters.IsNotNull}}"
+      >
+        <ic:SymbolIcon
+          Symbol="SelectObject"
+          HorizontalAlignment="Center"
+          VerticalAlignment="Center"
+        />
+      </Button>
+      <TextBox
+        Margin="10,0,10,10"
+        Classes="clearButton"
+        Watermark="{Binding [room.furni.list.filter]}"
+        Text="{Binding FilterText}"
+      />
+    </DockPanel>
+    <DataGrid
+      Grid.Row="1"
+      x:Name="DataGridFurni"
+      ItemsSource="{Binding Furni}"
+      CanUserReorderColumns="True"
+      CanUserResizeColumns="True"
+      CanUserSortColumns="True"
+      ContextRequested="OnContextRequested"
+    >
+      <DataGrid.ContextFlyout>
+        <ui:FAMenuFlyout>
+          <ui:MenuFlyoutItem
+            IconSource="{icm:SymbolIconSource Symbol=Eye}"
+            Text="{Binding [room.furni.list.show]}" Command="{Binding ShowFurniCmd}"
+          />
+          <ui:MenuFlyoutItem
+            IconSource="{icm:SymbolIconSource Symbol=EyeOff}"
+            Text="{Binding [room.furni.list.hide]}" Command="{Binding HideFurniCmd}"
+          />
+          <ui:MenuFlyoutItem
+            IconSource="{icm:SymbolIconSource Symbol=ArrowSwap}"
+            Text="{Binding [room.furni.list.toggle]}" Command="{Binding ToggleCmd}"
+          />
+          <ui:MenuFlyoutSubItem
+            IconSource="{icm:SymbolIconSource Symbol=ArrowSync}"
+            IsEnabled="{Binding RotateCmd.CanExecute^}"
+            Text="{Binding [room.furni.list.rotate]}"
+          >
+            <ui:MenuFlyoutItem
+              Classes="icononly"
+              IconSource="{icm:SymbolIconSource Symbol=ArrowUpRight}"
+              Command="{Binding RotateCmd}" CommandParameter="{x:Static xc:Directions.North}"
+            />
+            <ui:MenuFlyoutItem
+              Classes="icononly"
+              IconSource="{icm:SymbolIconSource Symbol=ArrowDownRight}"
+              Command="{Binding RotateCmd}" CommandParameter="{x:Static xc:Directions.East}"
+            />
+            <ui:MenuFlyoutItem
+              Classes="icononly"
+              IconSource="{icm:SymbolIconSource Symbol=ArrowDownLeft}"
+              Command="{Binding RotateCmd}" CommandParameter="{x:Static xc:Directions.South}"
+            />
+            <ui:MenuFlyoutItem
+              Classes="icononly"
+              IconSource="{icm:SymbolIconSource Symbol=ArrowUpLeft}"
+              Command="{Binding RotateCmd}" CommandParameter="{x:Static xc:Directions.West}"
+            />
+          </ui:MenuFlyoutSubItem>
+          <ui:MenuFlyoutItem
+            IconSource="{icm:SymbolIconSource Symbol=ArrowMove}"
+            Text="{Binding [room.furni.list.move]}" Command="{Binding MoveCmd}"
+          />
+          <ui:MenuFlyoutItem
+            IconSource="{icm:SymbolIconSource Symbol=ArrowExportUp}"
+            Text="{Binding [room.furni.list.pickUp]}" Command="{Binding PickupCmd}"
+          />
+          <ui:MenuFlyoutItem
+            IconSource="{icm:SymbolIconSource Symbol=ArrowBounce}"
+            Text="{Binding [room.furni.list.eject]}" Command="{Binding EjectCmd}"
+          />
+        </ui:FAMenuFlyout>
+      </DataGrid.ContextFlyout>
+      <DataGrid.Columns>
+        <DataGridTemplateColumn Width="120" Header="{Binding [room.furni.list.column.id]}" SortMemberPath="Id">
+          <DataTemplate DataType="vm:FurniViewModel">
+            <TextBlock Name="CellTextBlock" Classes="privacy" Text="{Binding Id}" />
+          </DataTemplate>
+        </DataGridTemplateColumn>
+        <DataGridTemplateColumn
+          x:DataType="vm:FurniViewModel"
+          Width="250" Header="{Binding [room.furni.list.column.name]}"
+          SortMemberPath="Name"
+          ClipboardContentBinding="{Binding Name}"
+        >
+          <DataTemplate x:DataType="vm:FurniViewModel">
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <TextBlock
+                Grid.Column="0"
+                Margin="12,0"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                TextTrimming="CharacterEllipsis"
+                Text="{Binding Name}"
+              >
+                <ToolTip.Tip>
+                  <v:FurniPopupView />
+                </ToolTip.Tip>
+              </TextBlock>
+              <ic:SymbolIcon Grid.Column="1" Symbol="EyeOff" Opacity="0.5" IsVisible="{Binding IsHidden}" />
+            </Grid>
+          </DataTemplate>
+        </DataGridTemplateColumn>
+        <DataGridTemplateColumn Header="{Binding [room.furni.list.column.ownerId]}" Width="120" IsVisible="{DynamicResource IsModern}" SortMemberPath="OwnerId">
+          <DataTemplate DataType="vm:FurniViewModel">
+            <TextBlock Classes="privacy" Name="CellTextBlock" Text="{Binding OwnerId}" />
+          </DataTemplate>
+        </DataGridTemplateColumn>
+        <DataGridTemplateColumn Header="{Binding [room.furni.list.column.ownerName]}" Width="150" IsVisible="{DynamicResource IsModern}" SortMemberPath="Owner">
+          <DataTemplate DataType="vm:FurniViewModel">
+            <TextBlock Classes="privacy" Name="CellTextBlock" Text="{Binding Owner}" />
+          </DataTemplate>
+        </DataGridTemplateColumn>
+      </DataGrid.Columns>
+    </DataGrid>
+  </Grid>
+</UserControl>
+

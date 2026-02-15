@@ -1,0 +1,191 @@
+<wnd:AppWindow
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:v="using:Xabbo.Avalonia.Views"
+  xmlns:vm="using:Xabbo.ViewModels"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:ic="using:FluentIcons.Avalonia.Fluent"
+  xmlns:wnd="using:FluentAvalonia.UI.Windowing"
+  xmlns:ui="using:FluentAvalonia.UI.Controls"
+  xmlns:props="using:Xabbo.Avalonia.Properties"
+  mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+  x:Name="Root"
+  x:Class="Xabbo.Avalonia.Views.MainWindow"
+  x:DataType="vm:MainViewModel"
+  Icon="/Assets/xabbo-skull-64.png"
+  WindowStartupLocation="CenterScreen"
+  Title="xabbo"
+  Width="980" Height="760"
+  MinWidth="980" MinHeight="760"
+  MaxWidth="980" MaxHeight="760"
+  CanResize="False"
+  FontSize="16"
+  Classes.isorigins="{DynamicResource IsOrigins}"
+  Classes.ismodern="{DynamicResource IsModern}"
+  Classes.ready="{DynamicResource IsReady}"
+  Classes.isError="{DynamicResource IsError}"
+  Classes.isConnecting="{DynamicResource IsConnecting}"
+>
+  <Design.DataContext>
+    <vm:MainViewModel />
+  </Design.DataContext>
+  <wnd:AppWindow.Styles>
+    <Style Selector="Grid#Overlay">
+      <Setter Property="IsHitTestVisible" Value="true" />
+      <Setter Property="Opacity" Value="1" />
+      <Setter Property="Transitions">
+          <Transitions>
+              <DoubleTransition Property="Opacity" Duration="0:0:0.8"/>
+          </Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="Image#OverlayImage">
+      <Setter Property="RenderTransform" Value="scale(1)" />
+      <Setter Property="Transitions">
+          <Transitions>
+            <DoubleTransition Property="Opacity" Duration="0:0:0.6"/>
+            <TransformOperationsTransition Property="RenderTransform" Easing="CubicEaseInOut" Duration="0:0:0.6"/>
+          </Transitions>
+      </Setter>
+    </Style>
+    <Style Selector=":is(Control).overlayContent">
+      <Setter Property="Opacity" Value="1" />
+      <Setter Property="Transitions">
+          <Transitions>
+              <DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
+          </Transitions>
+      </Setter>
+    </Style>
+    <Style Selector=":is(Control).overlayContent">
+      <Setter Property="Opacity" Value="1" />
+    </Style>
+    <Style Selector=".ready">
+      <Style Selector="^ Grid#Overlay">
+        <Setter Property="IsHitTestVisible" Value="false" />
+        <Setter Property="Opacity" Value="0" />
+      </Style>
+      <Style Selector="^ Image#OverlayImage">
+        <Setter Property="RenderTransform" Value="scale(4)" />
+      </Style>
+      <Style Selector="^ :is(Control).overlayContent">
+        <Setter Property="Opacity" Value="0" />
+      </Style>
+    </Style>
+    <Style Selector="Grid#OverlayContent">
+      <Setter Property="props:GridSetter.RowDefinitions">
+        <RowDefinitions>
+          <RowDefinition Height="*" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="*" />
+        </RowDefinitions>
+      </Setter>
+    </Style>
+    <Style Selector="Grid#ErrorDetails">
+      <Setter Property="IsVisible" Value="false" />
+    </Style>
+    <Style Selector=".isError">
+      <Style Selector="^ Grid#OverlayContent">
+        <Setter Property="props:GridSetter.RowDefinitions">
+          <RowDefinitions>
+            <RowDefinition Height="0" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+          </RowDefinitions>
+        </Setter>
+      </Style>
+      <Style Selector="^ Grid#ErrorDetails">
+        <Setter Property="IsVisible" Value="true" />
+      </Style>
+      <Style Selector="^ ui|ProgressRing#OverlayProgressRing">
+        <Setter Property="IsVisible" Value="false" />
+      </Style>
+    </Style>
+  </wnd:AppWindow.Styles>
+  <Grid RowDefinitions="32,*">
+    <Grid Name="TitleBarHost" ColumnDefinitions="48,*,Auto,0" ZIndex="1000" Background="{DynamicResource PremiumChromeGradientBrush}">
+      <Image
+        Margin="0,8,0,-8"
+        Source="avares://Xabbo.Avalonia/Assets/xabbo-skull-128.png"
+        Width="30" Height="30"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+      />
+      <TextBlock
+        Grid.Column="1"
+        VerticalAlignment="Center" Text="{Binding Title}"
+      />
+      <ToggleButton
+        Grid.Column="2" HorizontalAlignment="Right" BorderBrush="Transparent" Background="Transparent"
+        Margin="0,0,4,0" Padding="4"
+        Theme="{StaticResource TransparentButton}"
+        IsChecked="{Binding Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=Topmost}"
+      >
+        <ic:SymbolIcon Symbol="Pin" FontSize="14" Classes.filled="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=Topmost}" />
+      </ToggleButton>
+    </Grid>
+    <v:MainView Grid.Row="1" />
+    <Grid
+      x:Name="Overlay"
+      Grid.Row="1"
+      Background="{DynamicResource SolidBackgroundFillColorBase}"
+      Classes="overlay"
+    >
+      <Grid x:Name="OverlayContent" Margin="20" Classes="overlayContent">
+        <StackPanel Margin="0,0,0,10" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
+          <Panel>
+            <ui:ProgressRing
+              x:Name="OverlayProgressRing"
+              Classes="overlayContent"
+              Margin="-20"
+              Width="200" Height="200"
+            />
+            <Image
+              x:Name="OverlayImage"
+              Source="avares://Xabbo.Avalonia/Assets/xabbo-skull-128.png"
+              Width="128" Height="128"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Center"
+            />
+          </Panel>
+          <TextBlock
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            TextAlignment="Center"
+            Text="{DynamicResource AppStatus}"
+            FontSize="18"
+            TextWrapping="Wrap"
+          />
+        </StackPanel>
+        <Grid x:Name="ErrorDetails" Grid.Row="2" RowDefinitions="*,Auto">
+          <Border
+            Background="{DynamicResource CardBackgroundFillColorDefault}"
+            BorderThickness="1" CornerRadius="4"
+            BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+          >
+            <ScrollViewer Padding="10">
+              <SelectableTextBlock
+                Text="{Binding AppError}"
+                FontFamily="{DynamicResource Mono}"
+                FontSize="14"
+                TextWrapping="Wrap"
+              />
+            </ScrollViewer>
+          </Border>
+          <TextBlock Grid.Row="1" Margin="0,20,0,0" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Run Text="{Binding ReportIssueText}" />
+            <InlineUIContainer>
+              <Button Classes="link" Command="{Binding ReportErrorCmd}">
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                  <Path Width="24" Height="24" Stretch="Uniform" Fill="White" Data="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z" />
+                  <TextBlock Text="{Binding GitHubText}" />
+                </StackPanel>
+              </Button>
+            </InlineUIContainer>
+          </TextBlock>
+        </Grid>
+      </Grid>
+    </Grid>
+  </Grid>
+
+</wnd:AppWindow>

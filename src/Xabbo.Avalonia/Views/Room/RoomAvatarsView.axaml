@@ -1,0 +1,228 @@
+<UserControl
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:sys="clr-namespace:System;assembly=mscorlib"
+  xmlns:v="using:Xabbo.Avalonia.Views"
+  xmlns:vm="using:Xabbo.ViewModels"
+  xmlns:controls="using:Xabbo.Avalonia.Controls"
+  xmlns:xc="using:Xabbo.Core"
+  xmlns:ui="using:FluentAvalonia.UI.Controls"
+  xmlns:ic="using:FluentIcons.Avalonia.Fluent"
+  xmlns:icm="using:FluentIcons.Avalonia.Fluent.MarkupExtensions"
+  xmlns:collections="using:Avalonia.Collections"
+  mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+  x:Class="Xabbo.Avalonia.Views.RoomAvatarsView"
+  x:DataType="vm:RoomAvatarsViewModel"
+  Classes="pageRoot"
+>
+  <UserControl.Styles>
+    <Style Selector="DataGridRowGroupHeader">
+      <Setter Property="Template">
+        <ControlTemplate x:DataType="collections:DataGridCollectionViewGroup">
+          <Grid Background="Transparent">
+            <StackPanel Margin="10,5" HorizontalAlignment="Center" VerticalAlignment="Center">
+              <Image
+                IsVisible="{Binding Key, Converter={StaticResource EqConverter} ConverterParameter={x:Static vm:AvatarViewModelGroup.Staff}}"
+                HorizontalAlignment="Center"
+                Source="avares://Xabbo.Avalonia/Assets/Images/staff.png"
+              />
+              <TextBlock
+                FontSize="18"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Text="{Binding Key, Converter={StaticResource HumanizerConverter}}"
+              />
+            </StackPanel>
+            <TextBlock
+              IsVisible="{Binding Key, Converter={StaticResource NeqConverter} ConverterParameter={x:Static vm:AvatarViewModelGroup.RoomOwner}}"
+              Margin="10,10,14,10" HorizontalAlignment="Right"
+              FontSize="14" Text="{Binding ItemCount}"
+            />
+          </Grid>
+        </ControlTemplate>
+      </Setter>
+    </Style>
+  </UserControl.Styles>
+  <controls:Loading
+    Grid.RowSpan="2"
+    IsLoading="{Binding IsBusy}"
+    LoadingContent="{Binding StatusText}"
+    CancelCommand="{Binding CancelCmd}"
+    ContentFadeOpacity="0.1"
+  >
+    <Grid RowDefinitions="Auto,*">
+      <TextBox
+        Margin="10,0,10,10"
+        Classes="clearButton"
+        Watermark="{Binding [common.filter]}"
+        Text="{Binding FilterText}"
+      />
+      <DataGrid
+        x:Name="AvatarDataGrid"
+        Grid.Row="1"
+        CanUserReorderColumns="True"
+        CanUserResizeColumns="True"
+        CanUserSortColumns="True"
+        AutoGenerateColumns="False"
+        Background="Transparent"
+        ContextRequested="OnContextRequested"
+      >
+        <DataGrid.ContextFlyout>
+          <ui:FAMenuFlyout>
+            <ui:MenuFlyoutItem
+              IconSource="{icm:SymbolIconSource Symbol=Search}"
+              Text="{Binding [room.avatars.menu.find]}" Command="{Binding FindAvatarCmd}"
+            />
+            <ui:MenuFlyoutItem
+              IconSource="{icm:SymbolIconSource Symbol=BackpackAdd}"
+              Text="{Binding [room.avatars.menu.addToWardrobe]}"
+              Command="{Binding CopyAvatarToWardrobeCmd}"
+            />
+            <ui:MenuFlyoutItem
+              IconSource="{icm:SymbolIconSource Symbol=Handshake}"
+              Text="{Binding [room.avatars.menu.tradeUser]}"
+              Command="{Binding TradeUserCmd}"
+            />
+            <ui:MenuFlyoutSubItem
+              IsEnabled="{Binding CopyAvatarFieldCmd.CanExecute^}"
+              IconSource="{icm:SymbolIconSource Symbol=Copy}"
+              Text="{Binding [room.avatars.menu.copy]}"
+            >
+              <ui:MenuFlyoutItem Classes="modern" Text="{Binding [room.avatars.menu.copy.id]}" Command="{Binding CopyAvatarFieldCmd}" CommandParameter="id" />
+              <ui:MenuFlyoutItem Text="{Binding [room.avatars.menu.copy.name]}" Command="{Binding CopyAvatarFieldCmd}" CommandParameter="name" />
+              <ui:MenuFlyoutItem Text="{Binding [room.avatars.menu.copy.motto]}" Command="{Binding CopyAvatarFieldCmd}" CommandParameter="motto" />
+              <ui:MenuFlyoutItem Text="{Binding [room.avatars.menu.copy.figure]}" Command="{Binding CopyAvatarFieldCmd}" CommandParameter="figure" />
+            </ui:MenuFlyoutSubItem>
+            <ui:MenuFlyoutSubItem
+              Classes="modern"
+              IsEnabled="{Binding OpenUserProfileCmd.CanExecute^}"
+              IconSource="{icm:SymbolIconSource Symbol=Person}"
+              Text="{Binding [room.avatars.menu.openProfile]}"
+            >
+              <ui:MenuFlyoutItem Text="{Binding [room.avatars.menu.openProfile.inGame]}" Command="{Binding OpenUserProfileCmd}" CommandParameter="game" />
+              <ui:MenuFlyoutItem Text="{Binding [room.avatars.menu.openProfile.web]}" Command="{Binding OpenUserProfileCmd}" CommandParameter="web" />
+              <ui:MenuFlyoutItem Text="{Binding [room.avatars.menu.openProfile.habboWidgets]}" Command="{Binding OpenUserProfileCmd}" CommandParameter="habbowidgets" />
+            </ui:MenuFlyoutSubItem>
+            <ui:MenuFlyoutSubItem
+              IconSource="{icm:SymbolIconSource Symbol=Warning}"
+              Text="{Binding [room.avatars.menu.moderate]}"
+            >
+              <ui:MenuFlyoutSubItem.IsEnabled>
+                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                  <Binding Path="MuteUsersCmd.CanExecute^" />
+                  <Binding Path="KickUsersCmd.CanExecute^" />
+                  <Binding Path="BanUsersCmd.CanExecute^" />
+                  <Binding Path="BounceUsersCmd.CanExecute^" />
+                </MultiBinding>
+              </ui:MenuFlyoutSubItem.IsEnabled>
+              <ui:MenuFlyoutSubItem
+                Classes="modern"
+                Text="{Binding [room.avatars.menu.mute]}"
+                IsEnabled="{Binding MuteUsersCmd.CanExecute^}"
+                IconSource="{icm:SymbolIconSource Symbol=ChatOff}"
+              >
+                <ui:MenuFlyoutItem Text="{Binding [room.avatars.menu.mute.2mins]}" Command="{Binding MuteUsersCmd}" CommandParameter="2" />
+                <ui:MenuFlyoutItem Text="{Binding [room.avatars.menu.mute.5mins]}" Command="{Binding MuteUsersCmd}" CommandParameter="5" />
+                <ui:MenuFlyoutItem Text="{Binding [room.avatars.menu.mute.10mins]}" Command="{Binding MuteUsersCmd}" CommandParameter="10" />
+                <ui:MenuFlyoutItem Text="{Binding [room.avatars.menu.mute.15mins]}" Command="{Binding MuteUsersCmd}" CommandParameter="15" />
+                <ui:MenuFlyoutItem Text="{Binding [room.avatars.menu.mute.30mins]}" Command="{Binding MuteUsersCmd}" CommandParameter="30" />
+                <ui:MenuFlyoutItem Text="{Binding [room.avatars.menu.mute.1hour]}" Command="{Binding MuteUsersCmd}" CommandParameter="60" />
+                <ui:MenuFlyoutItem Text="{Binding [room.avatars.menu.mute.6hours]}" Command="{Binding MuteUsersCmd}" CommandParameter="360" />
+                <ui:MenuFlyoutItem Text="{Binding [room.avatars.menu.mute.12hours]}" Command="{Binding MuteUsersCmd}" CommandParameter="720" />
+                <ui:MenuFlyoutItem Text="{Binding [room.avatars.menu.mute.24hours]}" Command="{Binding MuteUsersCmd}" CommandParameter="1440" />
+              </ui:MenuFlyoutSubItem>
+              <ui:MenuFlyoutItem
+                Classes="modern"
+                Text="{Binding [room.avatars.menu.unmute]}"
+                IconSource="{icm:SymbolIconSource Symbol=Chat}"
+                Command="{Binding MuteUsersCmd}"
+                CommandParameter="0"
+              />
+              <ui:MenuFlyoutItem
+                Text="{Binding [room.avatars.menu.kick]}"
+                IconSource="{icm:SymbolIconSource Symbol=SignOut}"
+                Command="{Binding KickUsersCmd}"
+              />
+              <ui:MenuFlyoutSubItem
+                IsEnabled="{Binding BanUsersCmd.CanExecute^}"
+                IconSource="{icm:SymbolIconSource Symbol=PersonProhibited}"
+                Text="{Binding [room.avatars.menu.ban]}"
+              >
+                <ui:MenuFlyoutItem Text="{Binding [room.avatars.menu.ban.hour]}" Command="{Binding BanUsersCmd}" CommandParameter="{x:Static xc:BanDuration.Hour}" />
+                <ui:MenuFlyoutItem Text="{Binding [room.avatars.menu.ban.day]}" Command="{Binding BanUsersCmd}" CommandParameter="{x:Static xc:BanDuration.Day}" />
+                <ui:MenuFlyoutItem Text="{Binding [room.avatars.menu.ban.permanent]}" Command="{Binding BanUsersCmd}" CommandParameter="{x:Static xc:BanDuration.Permanent}" />
+              </ui:MenuFlyoutSubItem>
+              <ui:MenuFlyoutItem
+                Classes="modern"
+                Text="{Binding [room.avatars.menu.bounce]}"
+                IconSource="{icm:SymbolIconSource Symbol=ArrowBounce}"
+                Command="{Binding BounceUsersCmd}"
+              />
+            </ui:MenuFlyoutSubItem>
+            <ui:MenuFlyoutSeparator />
+            <ui:ToggleMenuFlyoutItem Text="{Binding [room.avatars.menu.showBots]}" IconSource="{icm:SymbolIconSource Symbol=Bot}" IsChecked="{Binding Config.ShowBots}" />
+            <ui:ToggleMenuFlyoutItem Text="{Binding [room.avatars.menu.showPets]}" IconSource="{icm:SymbolIconSource Symbol=AnimalCat}" IsChecked="{Binding Config.ShowPets}" />
+          </ui:FAMenuFlyout>
+        </DataGrid.ContextFlyout>
+        <DataGrid.Columns>
+          <DataGridTextColumn SortMemberPath="Index" Header="{Binding [room.avatars.column.index]}" Binding="{Binding Index, DataType={x:Type vm:AvatarViewModel}}" />
+          <DataGridTemplateColumn SortMemberPath="Id" Header="{Binding [room.avatars.column.id]}" IsVisible="{DynamicResource IsModern}">
+            <DataTemplate DataType="vm:AvatarViewModel">
+              <TextBlock Name="CellTextBlock" Classes="privacy" Text="{Binding Id}" />
+            </DataTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn
+            x:DataType="vm:AvatarViewModel"
+            Header="{Binding [room.avatars.column.name]}" SortMemberPath="Name"
+            ClipboardContentBinding="{Binding Name}"
+          >
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate DataType="{x:Type vm:AvatarViewModel}">
+                <DockPanel
+                  HorizontalAlignment="Stretch"
+                  Margin="12,0"
+                  Classes.IsUser="{Binding IsUser}"
+                >
+                  <DockPanel.Styles>
+                    <Style Selector="DockPanel.IsUser">
+                      <Setter Property="ToolTip.Tip">
+                        <Template>
+                          <v:UserPopupView />
+                        </Template>
+                      </Setter>
+                    </Style>
+                  </DockPanel.Styles>
+                  <TextBlock
+                    Classes="privacy"
+                    VerticalAlignment="Center"
+                    TextTrimming="CharacterEllipsis"
+                    Text="{Binding Name}"
+                  />
+                  <StackPanel
+                    DockPanel.Dock="Right"
+                    Orientation="Horizontal"
+                  >
+                    <ic:SymbolIcon
+                      FontSize="14"
+                      VerticalAlignment="Center"
+                      Symbol="Snooze"
+                      IsVisible="{Binding IsIdle, Mode=OneWay}"
+                    />
+                    <Image
+                      Margin="4,0,0,0"
+                      Source="avares://Xabbo.Avalonia/Assets/Images/trading.png"
+                      VerticalAlignment="Center"
+                      IsVisible="{Binding IsTrading, Mode=OneWay}"
+                    />
+                  </StackPanel>
+                </DockPanel>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+        </DataGrid.Columns>
+      </DataGrid>
+    </Grid>
+  </controls:Loading>
+</UserControl>

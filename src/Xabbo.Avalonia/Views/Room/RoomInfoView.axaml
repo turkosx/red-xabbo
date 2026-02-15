@@ -1,0 +1,243 @@
+<UserControl
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:img="using:AsyncImageLoader"
+  xmlns:services="using:Xabbo.Avalonia.Services"
+  xmlns:controls="using:Xabbo.Avalonia.Controls"
+  xmlns:v="using:Xabbo.Avalonia.Views"
+  xmlns:vm="using:Xabbo.ViewModels"
+  xmlns:ic="using:FluentIcons.Avalonia.Fluent"
+  xmlns:c="using:Xabbo.Avalonia.Converters"
+  mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+  x:Class="Xabbo.Avalonia.Views.RoomInfoView"
+  x:DataType="vm:RoomInfoViewModel"
+  FontSize="16"
+  Classes="pageRoot"
+>
+  <UserControl.Styles>
+    <Style Selector="SelectableTextBlock">
+      <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+  </UserControl.Styles>
+  <controls:Loading
+    FadeInDuration="0:0:0"
+    FadeOutDuration="0:0:0.5"
+    IsLoading="{Binding IsLoading}"
+  >
+    <ScrollViewer x:Name="layoutRoot" Classes="pageScroll" IsVisible="{Binding IsInRoom}">
+      <StackPanel IsVisible="{Binding Data, Converter={x:Static ObjectConverters.IsNotNull}}">
+        <Border
+          Padding="10" CornerRadius="4"
+          Background="{DynamicResource ControlFillColorTertiary}"
+          BorderBrush="{DynamicResource AccentControlElevationBorderBrush}"
+          BorderThickness="1"
+        >
+          <Grid ColumnDefinitions="Auto,*">
+            <Border
+              Margin="0,0,10,0"
+              Width="110" Height="110"
+              VerticalAlignment="Top"
+              ClipToBounds="True"
+              CornerRadius="4"
+              BorderThickness="1"
+              BorderBrush="{DynamicResource ControlFillColorTertiary}"
+              Background="{DynamicResource ControlFillColorTertiary}"
+            >
+              <Panel>
+                <ic:SymbolIcon
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  Symbol="Home"
+                />
+                <img:AdvancedImage
+                  Width="110" Height="110"
+                  Source="{Binding ThumbnailUrl}"
+                  Loader="{x:Static services:XabboImageLoader.Instance}"
+                >
+                  <img:AdvancedImage.Styles>
+                    <Style Selector="img|AdvancedImage">
+                      <Setter Property="Opacity" Value="0" />
+                      <Setter Property="Transitions">
+                        <Transitions>
+                          <DoubleTransition Property="Opacity" Duration="0:0:0.5" />
+                        </Transitions>
+                      </Setter>
+                      <Style Selector="^[IsLoading=false]">
+                        <Setter Property="Opacity" Value="1" />
+                      </Style>
+                    </Style>
+                  </img:AdvancedImage.Styles>
+                </img:AdvancedImage>
+              </Panel>
+            </Border>
+            <StackPanel Grid.Column="1">
+              <SelectableTextBlock>
+                <Run FontWeight="Bold" Text="{Binding Data.Name, Mode=OneWay, FallbackValue='Room name', Converter={StaticResource HabboStringConverter}}" />
+                <Run Text="{Binding [room.info.by]}" />
+                <Run Classes="privacy" Text="{Binding Data.OwnerName, Mode=OneWay, FallbackValue='Owner name'}" />
+              </SelectableTextBlock>
+              <SelectableTextBlock>
+                  <TextBox.Text>
+                      <Binding Path="Data.Description" Mode="OneWay">
+                          <Binding.Converter>
+                              <c:MultiValueConverter>
+                                  <StaticResource ResourceKey="HabboStringConverter" />
+                                  <StaticResource ResourceKey="WhitespaceNewlineConverter" />
+                              </c:MultiValueConverter>
+                          </Binding.Converter>
+                      </Binding>
+                  </TextBox.Text>
+              </SelectableTextBlock>
+            </StackPanel>
+          </Grid>
+        </Border>
+        <Grid x:Name="gridInfo" Margin="4" HorizontalAlignment="Stretch">
+          <Grid.Styles>
+            <Style Selector="TextBlock">
+              <Setter Property="HorizontalAlignment" Value="Right"/>
+              <Setter Property="FontWeight" Value="Bold"/>
+              <Setter Property="Margin" Value="0,0,10,0"/>
+            </Style>
+          </Grid.Styles>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- Room ID -->
+            <TextBlock Grid.Row="1" Text="{Binding [room.info.roomId]}" />
+            <SelectableTextBlock Classes="privacy" Grid.Column="1" Grid.Row="1" Text="{Binding Data.Id, Mode=OneWay}" TextWrapping="Wrap" />
+
+            <!-- Owner ID -->
+            <TextBlock Classes="modern" Grid.Row="3" Text="{Binding [room.info.ownerId]}" />
+            <SelectableTextBlock Classes="modern privacy" Grid.Column="1" Grid.Row="3" Text="{Binding Data.OwnerId, Mode=OneWay}" TextWrapping="Wrap" />
+
+            <!-- Category -->
+            <TextBlock Classes="modern" Grid.Row="4" Text="{Binding [room.info.category]}" />
+            <SelectableTextBlock Classes="modern" Grid.Column="1" Grid.Row="4" Text="{Binding Data.Category, Mode=OneWay, Converter={StaticResource HumanizerConverter}}" TextWrapping="Wrap" />
+
+            <!-- Room access -->
+            <TextBlock Grid.Row="6" Text="{Binding [room.info.access]}" />
+            <SelectableTextBlock Grid.Column="1" Grid.Row="6" Text="{Binding Data.Access, Mode=OneWay, Converter={StaticResource HumanizerConverter}}" TextWrapping="Wrap" />
+
+            <!-- Maximum visitors -->
+            <TextBlock Grid.Row="7" Text="{Binding [room.info.maxUsers]}" />
+            <SelectableTextBlock Grid.Column="1" Grid.Row="7" Text="{Binding Data.MaxUsers, Mode=OneWay}" TextWrapping="Wrap" />
+
+            <!-- Trading -->
+            <TextBlock Grid.Row="8" Text="{Binding [room.info.trading]}" />
+            <SelectableTextBlock Grid.Column="1" Grid.Row="8" Text="{Binding Data.Trading, Mode=OneWay, Converter={StaticResource HumanizerConverter}}" TextWrapping="Wrap" />
+
+            <!-- Moderation Settings -->
+            <TextBlock
+                Classes="modern"
+                Grid.Row="9" Grid.ColumnSpan="2"
+                Padding="4"
+                HorizontalAlignment="Stretch"
+                TextAlignment="Center"
+                Background="{StaticResource ThemeAccentBrush}"
+                Text="{Binding [room.info.moderation]}"
+            />
+
+            <TextBlock Classes="modern" Grid.Row="10" Text="{Binding [room.info.whoCanMute]}" />
+            <SelectableTextBlock
+              Classes="modern"
+              Grid.Row="10" Grid.Column="1"
+              TextWrapping="Wrap"
+              Text="{Binding Data.Moderation.Mute, Mode=OneWay, Converter={StaticResource HumanizerConverter}}"
+            />
+
+            <TextBlock Classes="modern" Grid.Row="11" Text="{Binding [room.info.whoCanKick]}" />
+            <SelectableTextBlock
+              Classes="modern"
+              Grid.Row="11" Grid.Column="1"
+              TextWrapping="Wrap"
+              Text="{Binding Data.Moderation.Kick, Mode=OneWay, Converter={StaticResource HumanizerConverter}}"
+            />
+
+            <TextBlock Classes="modern" Grid.Row="12" Text="{Binding [room.info.whoCanBan]}" />
+            <SelectableTextBlock
+              Classes="modern"
+              Grid.Row="12" Grid.Column="1"
+              TextWrapping="Wrap"
+              Text="{Binding Data.Moderation.Ban, Mode=OneWay, Converter={StaticResource HumanizerConverter}}"
+            />
+
+            <!-- Chat settings -->
+            <TextBlock
+                Classes="modern"
+                Grid.Row="13" Grid.ColumnSpan="2"
+                Padding="4"
+                HorizontalAlignment="Stretch"
+                TextAlignment="Center"
+                Background="{StaticResource AttentionToActionBrush}"
+                Text="{Binding [room.info.chat]}"
+            />
+
+            <TextBlock Classes="modern" Grid.Row="14" Text="{Binding [room.info.flow]}" />
+            <SelectableTextBlock
+              Classes="modern"
+              Grid.Row="14" Grid.Column="1"
+              TextWrapping="Wrap"
+              Text="{Binding Data.ChatSettings.Flow, Mode=OneWay, Converter={StaticResource HumanizerConverter}}"
+            />
+
+            <TextBlock Classes="modern" Grid.Row="15" Text="{Binding [room.info.bubbleWidth]}"  />
+            <SelectableTextBlock
+              Classes="modern"
+              Grid.Row="15" Grid.Column="1"
+              TextWrapping="Wrap"
+              Text="{Binding Data.ChatSettings.BubbleWidth, Mode=OneWay, Converter={StaticResource HumanizerConverter}}"
+            />
+
+            <TextBlock Classes="modern" Grid.Row="16" Text="{Binding [room.info.scrollSpeed]}" />
+            <SelectableTextBlock
+              Classes="modern"
+              Grid.Row="16" Grid.Column="1"
+              TextWrapping="Wrap"
+              Text="{Binding Data.ChatSettings.ScrollSpeed, Mode=OneWay, Converter={StaticResource HumanizerConverter}}"
+            />
+
+            <TextBlock Classes="modern" Grid.Row="17" Text="{Binding [room.info.talkHearingDistance]}" />
+            <SelectableTextBlock
+              Classes="modern"
+              Grid.Row="17" Grid.Column="1"
+              TextWrapping="Wrap"
+              Text="{Binding Data.ChatSettings.TalkHearingDistance, Mode=OneWay, Converter={StaticResource HumanizerConverter}}"
+            />
+
+            <TextBlock Classes="modern" Grid.Row="18" Text="{Binding [room.info.floodProtection]}" />
+            <SelectableTextBlock
+              Classes="modern"
+              Grid.Row="18" Grid.Column="1"
+              TextWrapping="Wrap"
+              Text="{Binding Data.ChatSettings.FloodProtection, Mode=OneWay, Converter={StaticResource HumanizerConverter}}"
+            />
+        </Grid>
+      </StackPanel>
+    </ScrollViewer>
+  </controls:Loading>
+</UserControl>

@@ -1,0 +1,97 @@
+<UserControl
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:vm="using:Xabbo.ViewModels"
+  mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+  x:Class="Xabbo.Avalonia.Views.FurniDataView"
+  x:DataType="vm:FurniDataViewModel"
+  Classes="pageRoot"
+>
+  <Grid RowDefinitions="Auto,*">
+    <TextBox
+      Margin="10"
+      Classes="clearButton"
+      Text="{Binding FilterText}"
+      Watermark="{Binding [common.filter]}"
+    />
+    <DataGrid
+      Grid.Row="1"
+      ItemsSource="{Binding Furni}"
+      CanUserReorderColumns="True"
+      CanUserResizeColumns="True"
+      CanUserSortColumns="True"
+    >
+      <DataGrid.Columns>
+        <DataGridTextColumn
+          Width="200"
+          Header="{Binding [gameData.furni.column.name]}"
+          Binding="{Binding Name}"
+        />
+        <DataGridTemplateColumn
+          x:DataType="vm:FurniInfoViewModel"
+          Width="150"
+          Header="{Binding [gameData.furni.column.identifier]}"
+          ClipboardContentBinding="{Binding Identifier}"
+        >
+          <DataTemplate>
+            <TextBlock
+              Margin="12,0,12,0"
+              VerticalAlignment="Center"
+              FontFamily="{StaticResource Mono}"
+              FontSize="14"
+              Text="{Binding Identifier}"
+              TextTrimming="CharacterEllipsis"
+            />
+          </DataTemplate>
+        </DataGridTemplateColumn>
+        <DataGridTemplateColumn
+          x:DataType="vm:FurniInfoViewModel"
+          Width="80"
+          Header="{Binding [gameData.furni.column.type]}"
+          ClipboardContentBinding="{Binding Type}"
+        >
+          <DataTemplate DataType="vm:FurniInfoViewModel">
+            <TextBlock
+              Margin="12,0,12,0"
+              VerticalAlignment="Center"
+              Text="{Binding Type}"
+              TextTrimming="CharacterEllipsis"
+            />
+          </DataTemplate>
+        </DataGridTemplateColumn>
+        <DataGridTemplateColumn
+          x:DataType="vm:FurniInfoViewModel"
+          Header="{Binding [gameData.furni.column.kind]}"
+          Width="80"
+          IsVisible="{DynamicResource IsModern}"
+          ClipboardContentBinding="{Binding Kind}"
+        >
+          <DataTemplate DataType="vm:FurniInfoViewModel">
+            <TextBlock
+              Margin="12,0,12,0"
+              VerticalAlignment="Center"
+              Text="{Binding Kind}"
+              TextTrimming="CharacterEllipsis"
+              FontFamily="{StaticResource Mono}"
+              FontSize="14"
+            />
+          </DataTemplate>
+        </DataGridTemplateColumn>
+        <DataGridTextColumn
+          Width="100"
+          IsVisible="{DynamicResource IsModern}"
+          Header="{Binding [gameData.furni.column.line]}"
+          Binding="{Binding Line}"
+        />
+        <DataGridTextColumn
+          Width="100"
+          IsVisible="{DynamicResource IsModern}"
+          Header="{Binding [gameData.furni.column.category]}"
+          Binding="{Binding Category}"
+        />
+      </DataGrid.Columns>
+    </DataGrid>
+  </Grid>
+</UserControl>

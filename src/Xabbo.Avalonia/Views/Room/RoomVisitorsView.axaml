@@ -1,0 +1,46 @@
+<UserControl
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:v="using:Xabbo.Avalonia.Views"
+  xmlns:vm="using:Xabbo.ViewModels"
+  mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+  x:Class="Xabbo.Avalonia.Views.RoomVisitorsView"
+  x:DataType="vm:RoomVisitorsViewModel"
+  Classes="pageRoot"
+>
+  <Grid RowDefinitions="Auto,*">
+    <TextBox
+      Margin="10,0,10,10"
+      Classes="clearButton"
+      Text="{Binding FilterText}"
+      Watermark="{Binding [common.filter]}"
+    />
+    <DataGrid
+      Name="DataGridVisitors"
+      Grid.Row="1"
+      ItemsSource="{Binding Visitors}"
+      CanUserSortColumns="False"
+      CanUserReorderColumns="True"
+      CanUserResizeColumns="True"
+    >
+      <DataGrid.Columns>
+        <DataGridTemplateColumn Header="{Binding [room.visitors.column.id]}" IsVisible="{DynamicResource IsModern}">
+          <DataTemplate DataType="vm:VisitorViewModel">
+            <TextBlock Name="CellTextBlock" Classes="privacy" Text="{Binding Id}" />
+          </DataTemplate>
+        </DataGridTemplateColumn>
+        <DataGridTemplateColumn Header="{Binding [room.visitors.column.name]}">
+          <DataTemplate DataType="vm:VisitorViewModel">
+            <TextBlock Name="CellTextBlock" Classes="privacy" Text="{Binding Name}" />
+          </DataTemplate>
+        </DataGridTemplateColumn>
+        <DataGridTextColumn Header="{Binding [room.visitors.column.lastEntered]}" Binding="{Binding Entered}" />
+        <DataGridTextColumn Header="{Binding [room.visitors.column.left]}" Binding="{Binding Left}" />
+        <DataGridTextColumn Header="{Binding [room.visitors.column.visits]}" Binding="{Binding Visits}" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </Grid>
+
+</UserControl>

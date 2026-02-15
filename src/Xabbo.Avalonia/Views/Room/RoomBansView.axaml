@@ -1,0 +1,66 @@
+﻿<UserControl
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:sys="clr-namespace:System;assembly=mscorlib"
+  xmlns:ui="using:FluentAvalonia.UI.Controls"
+  xmlns:controls="using:Xabbo.Avalonia.Controls"
+  xmlns:vm="using:Xabbo.ViewModels"
+  mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+  x:Class="Xabbo.Avalonia.Views.RoomBansView"
+  x:DataType="vm:RoomBansViewModel"
+  Classes="pageRoot"
+>
+  <Grid RowDefinitions="Auto,*,Auto">
+    <TextBox
+      Margin="10,0,10,10"
+      Classes="clearButton"
+      Watermark="{Binding [room.bans.filter]}"
+      Text="{Binding FilterText}"
+    />
+    <controls:Loading Grid.Row="1" IsLoading="{Binding IsLoading}">
+      <Panel>
+        <DataGrid x:Name="DataGridBans" ItemsSource="{Binding Bans}">
+          <DataGrid.Columns>
+            <DataGridTextColumn Header="{Binding [room.bans.column.id]}" Binding="{Binding Id}" />
+            <DataGridTextColumn Header="{Binding [room.bans.column.name]}" Binding="{Binding Name}" />
+          </DataGrid.Columns>
+        </DataGrid>
+        <controls:InfoOverlay Text="{Binding [room.bans.none]}">
+          <controls:InfoOverlay.Styles>
+            <Style Selector="controls|InfoOverlay">
+              <Setter Property="Opacity" Value="0" />
+              <Style Selector="^.empty">
+                <Setter Property="Opacity" Value="1" />
+              </Style>
+            </Style>
+          </controls:InfoOverlay.Styles>
+          <Classes.empty>
+            <MultiBinding Converter="{x:Static BoolConverters.And}">
+              <Binding Path="HasLoaded" />
+              <Binding Path="Bans.Count" Converter="{StaticResource EqConverter}">
+                <Binding.ConverterParameter>
+                  <sys:Int32>0</sys:Int32>
+                </Binding.ConverterParameter>
+              </Binding>
+            </MultiBinding>
+          </Classes.empty>
+        </controls:InfoOverlay>
+      </Panel>
+    </controls:Loading>
+    <WrapPanel Grid.Row="2" Margin="10" HorizontalAlignment="Right">
+      <Button
+        Content="{Binding [room.bans.unban]}"
+        Command="{Binding UnbanSelectedUsersCmd}"
+        CommandParameter="{Binding #DataGridBans.SelectedItems}"
+      />
+      <Button
+        Margin="10,0,0,0"
+        Content="{Binding [room.bans.load]}"
+        Command="{Binding LoadBansCmd}"
+      />
+    </WrapPanel>
+  </Grid>
+</UserControl>
+

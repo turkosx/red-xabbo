@@ -1,0 +1,62 @@
+﻿<UserControl
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:sys="clr-namespace:System;assembly=mscorlib"
+  xmlns:controls="using:Xabbo.Avalonia.Controls"
+  xmlns:v="using:Xabbo.Avalonia.Views"
+  xmlns:vm="using:Xabbo.ViewModels"
+  xmlns:ic="using:FluentIcons.Avalonia.Fluent"
+  mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+  x:Class="Xabbo.Avalonia.Views.RoomFurniView"
+  x:DataType="vm:RoomFurniViewModel"
+  Background="Transparent"
+  Classes="pageRoot"
+>
+  <UserControl.Styles>
+    <Style Selector="TabItem">
+      <Setter Property="MinHeight" Value="32" />
+    </Style>
+    <Style Selector="TabItem:selected /template/ Rectangle#PART_SelectedPipe">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+  </UserControl.Styles>
+  <controls:Loading
+    IsLoading="{Binding IsBusy}"
+    LoadingContent="{Binding StatusText}"
+    ContentFadeOpacity="0.1"
+    CancelCommand="{Binding CancelCmd}"
+  >
+    <TabControl x:Name="FurniTabs" Padding="0" TabStripPlacement="Bottom">
+      <TabItem>
+        <TabItem.Header>
+          <StackPanel Orientation="Horizontal" Spacing="4">
+            <ic:SymbolIcon VerticalAlignment="Center" Symbol="List" />
+            <TextBlock VerticalAlignment="Center" Text="{Binding [room.furni.tab.list]}" />
+          </StackPanel>
+        </TabItem.Header>
+        <v:RoomFurniListView />
+      </TabItem>
+      <TabItem>
+        <TabItem.Header>
+          <StackPanel Orientation="Horizontal" Spacing="4">
+            <ic:SymbolIcon VerticalAlignment="Center" Symbol="Grid" />
+            <TextBlock VerticalAlignment="Center" Text="{Binding [room.furni.tab.grid]}" />
+          </StackPanel>
+        </TabItem.Header>
+        <v:RoomFurniGridView />
+      </TabItem>
+      <TabItem Classes="modern">
+        <TabItem.Header>
+          <StackPanel Orientation="Horizontal" Spacing="4">
+            <ic:SymbolIcon VerticalAlignment="Center" Symbol="Gift" />
+            <TextBlock VerticalAlignment="Center" Text="{Binding [room.furni.tab.gifts]}" />
+          </StackPanel>
+        </TabItem.Header>
+        <v:RoomGiftsView DataContext="{Binding GiftsViewModel}" />
+      </TabItem>
+    </TabControl>
+  </controls:Loading>
+</UserControl>
+

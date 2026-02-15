@@ -1,0 +1,114 @@
+<UserControl
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:ui="using:FluentAvalonia.UI.Controls"
+  xmlns:ic="using:FluentIcons.Avalonia.Fluent"
+  xmlns:icm="using:FluentIcons.Avalonia.Fluent.MarkupExtensions"
+  xmlns:img="using:AsyncImageLoader"
+  xmlns:controls="using:Xabbo.Avalonia.Controls"
+  xmlns:services="using:Xabbo.Avalonia.Services"
+  xmlns:vm="using:Xabbo.ViewModels"
+  xmlns:v="using:Xabbo.Avalonia.Views"
+  mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+  x:Class="Xabbo.Avalonia.Views.InventoryStacksView"
+  x:DataType="vm:InventoryViewModel"
+  Classes="pageRoot"
+>
+  <Grid RowDefinitions="Auto,*">
+    <TextBox Classes="clearButton" Margin="10" Watermark="{Binding [common.filter]}" Text="{Binding FilterText}" />
+    <ListBox
+      Grid.Row="1"
+      Classes="flat"
+      Padding="8,0,8,8"
+      Background="Transparent"
+      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+      SelectionMode="Multiple"
+      ItemsSource="{Binding Stacks}"
+      Selection="{Binding Selection}"
+    >
+      <ListBox.ContextFlyout>
+        <ui:FAMenuFlyout>
+          <ui:MenuFlyoutItem
+            IconSource="{icm:SymbolIconSource Symbol=HandLeft, IconVariant=Filled}"
+            Text="{Binding [inventory.menu.offer]}" Command="{Binding OfferItemsCmd}"
+          />
+          <ui:MenuFlyoutSubItem
+            IconSource="{icm:SymbolIconSource Symbol=ArrowDownload, IconVariant=Filled}"
+            Text="{Binding [inventory.menu.place]}"
+          >
+            <ui:MenuFlyoutItem
+              IconSource="{icm:SymbolIconSource Symbol=GridDots, IconVariant=Filled}"
+               Text="{Binding [inventory.menu.place.anywhere]}" Command="{Binding PlaceItemsCmd}" CommandParameter="anywhere"
+            />
+            <ui:MenuFlyoutItem
+              IconSource="{icm:SymbolIconSource Symbol=SelectObject, IconVariant=Filled}"
+               Text="{Binding [inventory.menu.place.selectedArea]}" Command="{Binding PlaceItemsCmd}" CommandParameter="area"
+            />
+            <ui:MenuFlyoutItem
+              IconSource="{icm:SymbolIconSource Symbol=CursorClick, IconVariant=Filled}"
+               Text="{Binding [inventory.menu.place.selectedTiles]}" Command="{Binding PlaceItemsCmd}" CommandParameter="manual"
+            />
+          </ui:MenuFlyoutSubItem>
+          <ui:MenuFlyoutItem
+            IconSource="{icm:SymbolIconSource Symbol=ArrowSync}"
+            Text="{Binding [inventory.menu.reload]}" Command="{Binding LoadCmd}"
+          />
+        </ui:FAMenuFlyout>
+      </ListBox.ContextFlyout>
+      <ListBox.ItemsPanel>
+        <ItemsPanelTemplate>
+          <WrapPanel Orientation="Horizontal" />
+        </ItemsPanelTemplate>
+      </ListBox.ItemsPanel>
+      <ListBox.ItemTemplate>
+        <DataTemplate DataType="vm:InventoryStackViewModel">
+          <Border Width="60" Height="60">
+            <Border.Styles>
+              <Style Selector="ui|InfoBadge.Informational:value /template/ TextBlock#ValueTextBlock">
+                <Setter Property="Margin" Value="4,0" />
+              </Style>
+            </Border.Styles>
+            <ToolTip.Tip>
+              <v:FurniPopupView ShowIcon="False" />
+            </ToolTip.Tip>
+            <Panel>
+              <TextBlock
+                Text="{Binding Name, Converter={StaticResource FirstLetterConverter}}"
+                FontSize="20"
+                Opacity="0.33"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+              >
+                <TextBlock.IsVisible>
+                  <MultiBinding Converter="{x:Static BoolConverters.And}">
+                    <Binding Path="!#IconImage.IsLoading" />
+                    <Binding Path="#IconImage.CurrentImage" Converter="{x:Static ObjectConverters.IsNull}" />
+                  </MultiBinding>
+                </TextBlock.IsVisible>
+              </TextBlock>
+              <controls:FurniIconImage x:Name="IconImage" Icon="{Binding Icon}" />
+              <ui:InfoBadge
+                Margin="4"
+                HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                TextElement.FontSize="10"
+                Classes="Informational"
+                Value="{Binding Count}"
+                IsVisible="{Binding Count, Converter={StaticResource GtConverter}, ConverterParameter={StaticResource PositiveOne}}"
+              />
+              <!-- Trade offer count -->
+              <ui:InfoBadge
+                Margin="4"
+                HorizontalAlignment="Right" VerticalAlignment="Top"
+                TextElement.FontSize="10"
+                Value="{Binding OfferCount}"
+                IsVisible="{Binding OfferCount, Converter={StaticResource GtConverter}, ConverterParameter={StaticResource Zero}}"
+              />
+            </Panel>
+          </Border>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+  </Grid>
+</UserControl>

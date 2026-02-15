@@ -1,0 +1,347 @@
+<Application
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  x:Class="Xabbo.Avalonia.App"
+  xmlns:sys="using:System"
+  xmlns:local="using:Xabbo.Avalonia"
+  xmlns:sty="using:FluentAvalonia.Styling"
+  xmlns:ui="using:FluentAvalonia.UI.Controls"
+  xmlns:ic="using:FluentIcons.Avalonia.Fluent"
+  xmlns:img="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+  xmlns:services="using:Xabbo.Avalonia.Services"
+  xmlns:controls="using:Xabbo.Avalonia.Controls"
+  xmlns:c="using:Xabbo.Avalonia.Converters"
+  RequestedThemeVariant="Dark"
+>
+  <Application.DataTemplates>
+    <local:ViewLocator/>
+  </Application.DataTemplates>
+
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceInclude Source="Controls/Loading.axaml" />
+        <ResourceInclude Source="Controls/InfoOverlay.axaml" />
+        <ResourceInclude Source="Controls/StatusTabControl.axaml" />
+        <ResourceInclude Source="Controls/TimingSlider.axaml" />
+        <ResourceInclude Source="Controls/AvatarImage.axaml" />
+        <ResourceInclude Source="Controls/FurniIconImage.axaml" />
+      </ResourceDictionary.MergedDictionaries>
+
+      <!-- Common resources -->
+      <sys:Int32 x:Key="Zero">0</sys:Int32>
+      <sys:Int32 x:Key="PositiveOne">1</sys:Int32>
+      <sys:Int32 x:Key="NegativeOne">-1</sys:Int32>
+
+      <sys:Double x:Key="ControlContentThemeFontSize">16</sys:Double>
+      <sys:Double x:Key="TabItemHeaderFontSize">30</sys:Double>
+
+      <FontFamily x:Key="Sans">fonts:#IBM Plex Sans</FontFamily>
+      <FontFamily x:Key="Mono">fonts:#IBM Plex Mono</FontFamily>
+
+      <!-- Session -->
+      <x:Boolean x:Key="IsConnecting">True</x:Boolean>
+      <x:Boolean x:Key="IsConnected">False</x:Boolean>
+      <x:Boolean x:Key="IsOrigins">False</x:Boolean>
+      <x:Boolean x:Key="IsModern">False</x:Boolean>
+      <x:Boolean x:Key="IsError">False</x:Boolean>
+      <x:Boolean x:Key="IsDebug">False</x:Boolean>
+      <x:String x:Key="AppStatus">Waiting for connection...</x:String>
+
+      <!-- Premium red accent palette -->
+      <Color x:Key="SystemAccentColor">#E63A45</Color>
+      <Color x:Key="SystemAccentColorLight1">#F05A64</Color>
+      <Color x:Key="SystemAccentColorLight2">#FA7780</Color>
+      <Color x:Key="SystemAccentColorLight3">#FFA0A7</Color>
+      <Color x:Key="SystemAccentColorDark1">#C92E3A</Color>
+      <Color x:Key="SystemAccentColorDark2">#A22431</Color>
+      <Color x:Key="SystemAccentColorDark3">#7D1B25</Color>
+
+      <Color x:Key="RadioButtonCheckGlyphFill">#E63A45</Color>
+      <Color x:Key="RadioButtonCheckGlyphFillPointerOver">#E63A45</Color>
+      <Color x:Key="RadioButtonCheckGlyphFillPressed">#E63A45</Color>
+      <Color x:Key="RadioButtonCheckGlyphFillDisabled">#333333</Color>
+      <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="Transparent" />
+      <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForegroundDisabled" Color="Transparent" />
+
+      <LinearGradientBrush x:Key="PremiumAccentGradientBrush" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#D22B3E" Offset="0.0" />
+        <GradientStop Color="#FF5A5F" Offset="1.0" />
+      </LinearGradientBrush>
+      <LinearGradientBrush x:Key="PremiumCardBackgroundBrush" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#FF181618" Offset="0.0" />
+        <GradientStop Color="#FF22191B" Offset="1.0" />
+      </LinearGradientBrush>
+      <LinearGradientBrush x:Key="PremiumChromeGradientBrush" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#FF171415" Offset="0.0" />
+        <GradientStop Color="#FF241617" Offset="1.0" />
+      </LinearGradientBrush>
+      <SolidColorBrush x:Key="PremiumCardStrokeBrush" Color="#66E96A70" />
+
+      <!-- Fix: make checkbox padding consistent across different platforms -->
+      <Thickness x:Key="CheckBoxPadding">10,6,10,6</Thickness>
+      <Thickness x:Key="CheckBoxMargin">0,4,12,4</Thickness>
+      <Thickness x:Key="FilterTextBoxPadding">10,6,10,6</Thickness>
+      <sys:Double x:Key="FilterTextBoxMinHeight">34</sys:Double>
+
+      <c:HabboStringConverter x:Key="HabboStringConverter"/>
+      <c:MultiValueConverter x:Key="MultiValueConverter"/>
+      <c:BoolToOpacityConverter x:Key="BoolToOpacityConverter"/>
+      <c:HumanizerConverter x:Key="HumanizerConverter"/>
+      <c:QuantityConverter x:Key="QuantityConverter"/>
+      <c:FirstLetterConverter x:Key="FirstLetterConverter"/>
+      <c:WhitespaceNewlineConverter x:Key="WhitespaceNewlineConverter" />
+      <c:GtConverter x:Key="GtConverter" />
+      <c:EqualityConverter x:Key="EqConverter"/>
+      <c:InequalityConverter x:Key="NeqConverter"/>
+      <c:HslU8Converter x:Key="HslU8Converter"/>
+
+    </ResourceDictionary>
+  </Application.Resources>
+
+  <Application.Styles>
+    <sty:FluentAvaloniaTheme  />
+    <StyleInclude Source="avares://AsyncImageLoader.Avalonia/AdvancedImage.axaml" />
+    <Style Selector="img|AdvancedImage">
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Grid/>
+        </ControlTemplate>
+      </Setter>
+      <Style Selector="^.spinner">
+        <Setter Property="Template">
+          <ControlTemplate>
+            <Grid>
+              <ui:ProgressRing
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Width="24" Height="24"
+                IsVisible="{TemplateBinding IsLoading}"
+              />
+            </Grid>
+          </ControlTemplate>
+        </Setter>
+      </Style>
+    </Style>
+
+    <Style Selector="Button.link">
+      <Setter Property="Padding" Value="2,0" />
+      <Setter Property="Theme" Value="{StaticResource TransparentButton}" />
+      <Setter Property="Foreground" Value="#FF8F96" />
+      <Setter Property="FontWeight" Value="Bold" />
+      <Setter Property="Cursor" Value="Hand" />
+    </Style>
+    <Style Selector="Button.link:pointerover">
+      <Setter Property="Foreground" Value="#FFC2C7" />
+    </Style>
+    <Style Selector="Button:not(.link)">
+      <Setter Property="CornerRadius" Value="8" />
+    </Style>
+    <Style Selector="ToggleButton">
+      <Setter Property="CornerRadius" Value="8" />
+    </Style>
+    <Style Selector="TextBox.clearButton">
+      <Setter Property="Padding" Value="{DynamicResource FilterTextBoxPadding}" />
+      <Setter Property="MinHeight" Value="{DynamicResource FilterTextBoxMinHeight}" />
+      <Setter Property="ClipToBounds" Value="True" />
+    </Style>
+    <Style Selector="ComboBox">
+      <Setter Property="MinHeight" Value="34" />
+    </Style>
+    <Style Selector="NumericUpDown">
+      <Setter Property="MinHeight" Value="34" />
+    </Style>
+    <Style Selector="ScrollViewer.pageScroll">
+      <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
+      <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+      <Setter Property="IsScrollInertiaEnabled" Value="True" />
+      <Setter Property="ClipToBounds" Value="False" />
+      <Setter Property="Padding" Value="0,0,10,0" />
+    </Style>
+    <Style Selector="ScrollViewer.pageScroll /template/ ScrollBar#PART_VerticalScrollBar">
+      <Setter Property="Margin" Value="0,0,-12,0" />
+    </Style>
+    <Style Selector="ScrollBar:vertical">
+      <Setter Property="Width" Value="10" />
+      <Setter Property="Margin" Value="2,0,2,0" />
+    </Style>
+    <Style Selector="ScrollBar:horizontal">
+      <Setter Property="Height" Value="10" />
+      <Setter Property="Margin" Value="0,2,0,2" />
+    </Style>
+    <Style Selector="ScrollBar Thumb">
+      <Setter Property="Background" Value="#66FFFFFF" />
+      <Setter Property="CornerRadius" Value="8" />
+      <Setter Property="MinWidth" Value="6" />
+      <Setter Property="MinHeight" Value="6" />
+    </Style>
+    <Style Selector="ScrollBar:pointerover Thumb">
+      <Setter Property="Background" Value="#88FFFFFF" />
+    </Style>
+    <Style Selector="ScrollBar:pressed Thumb">
+      <Setter Property="Background" Value="#AAFF5A5F" />
+    </Style>
+    <Style Selector="UserControl.pageRoot">
+      <Setter Property="ClipToBounds" Value="False" />
+    </Style>
+
+    <Style Selector="CheckBox">
+      <Setter Property="Padding" Value="{DynamicResource CheckBoxPadding}" />
+      <Setter Property="Margin" Value="{DynamicResource CheckBoxMargin}" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="WrapPanel CheckBox">
+      <Setter Property="Margin" Value="0,4,12,4" />
+    </Style>
+    <Style Selector="RadioButton">
+      <Setter Property="Margin" Value="0,4,10,4" />
+    </Style>
+    <Style Selector="Expander">
+      <Setter Property="Margin" Value="0,0,0,8" />
+      <Setter Property="Padding" Value="10,6" />
+      <Setter Property="Background" Value="{DynamicResource PremiumCardBackgroundBrush}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource PremiumCardStrokeBrush}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="10" />
+    </Style>
+    <Style Selector="ui|SettingsExpander">
+      <Setter Property="Margin" Value="0,0,0,8" />
+      <Setter Property="Padding" Value="10,6" />
+      <Setter Property="Background" Value="{DynamicResource PremiumCardBackgroundBrush}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource PremiumCardStrokeBrush}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="10" />
+    </Style>
+    <Style Selector="Border.card">
+      <Setter Property="Background" Value="{DynamicResource PremiumCardBackgroundBrush}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource PremiumCardStrokeBrush}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="10" />
+      <Setter Property="Padding" Value="10,8" />
+    </Style>
+
+    <!-- Hide modern components on origins sessions -->
+    <Style Selector=".isorigins :is(Control).modern">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+
+    <!-- Hide origins components on modern sessions -->
+    <Style Selector=".ismodern :is(Control).origins">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+
+    <!-- Privacy mode -->
+    <Style Selector=".isPrivate">
+      <Style Selector="^ :is(TextBlock).privacy">
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="Background" Value="#C8FFFFFF" />
+        <Setter Property="Foreground" Value="Transparent" />
+      </Style>
+      <Style Selector="^ Run.privacy">
+          <Setter Property="Background" Value="#C8FFFFFF" />
+          <Setter Property="Foreground" Value="Transparent" />
+      </Style>
+    </Style>
+
+    <!-- Flat ListBox selection style -->
+    <Style Selector="ListBox.flat">
+      <Style Selector="^ ListBoxItem">
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="MinWidth" Value="0" />
+        <Setter Property="MinHeight" Value="0" />
+      </Style>
+      <Style Selector="^ ListBoxItem > Border">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="BorderBrush" Value="{DynamicResource PremiumCardStrokeBrush}" />
+        <Setter Property="Transitions">
+          <Transitions>
+            <BrushTransition Property="BorderBrush" Duration="0:0:0.1" />
+          </Transitions>
+        </Setter>
+      </Style>
+      <Style Selector="^ ListBoxItem:selected > Border">
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{DynamicResource AccentFillColorDefaultBrush}" />
+      </Style>
+      <Style Selector="^ ListBoxItem:selected /template/ Rectangle#SelectionIndicator">
+        <Setter Property="IsVisible" Value="false" />
+      </Style>
+    </Style>
+
+    <Style Selector="SelectableTextBlock">
+      <Setter Property="SelectionBrush" Value="#66FF5A5F" />
+    </Style>
+
+    <Style Selector="ic|SymbolIcon.filled">
+      <Setter Property="IconVariant" Value="Filled" />
+    </Style>
+
+    <Style Selector=":is(Window), :is(Popup), :is(ToolTip)">
+      <Setter Property="TextElement.FontSize" Value="14" />
+    </Style>
+
+    <Style Selector=":is(Window)">
+      <Setter Property="FontSize" Value="16" />
+    </Style>
+
+    <!-- Larger dialogs -->
+    <Style Selector="ui|ContentDialog:fullsize Border#BackgroundElement">
+      <Setter Property="Margin" Value="80" />
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="MaxWidth" Value="900" />
+    </Style>
+    <Style Selector="ui|ContentDialog:fullsize /template/ ScrollViewer#ContentScrollViewer /template/ ScrollContentPresenter#PART_ContentPresenter">
+      <Setter Property="CanVerticallyScroll" Value="false" />
+    </Style>
+
+    <!-- Slimmer tab items -->
+    <Style Selector="TabItem">
+      <Setter Property="MinHeight" Value="40" />
+      <Setter Property="FontSize" Value="16" />
+    </Style>
+
+    <!-- DataGrid -->
+    <Style Selector="DataGridColumnHeader /template/ Grid#PART_ColumnHeaderRoot TextBlock">
+      <Setter Property="FontSize" Value="14" />
+    </Style>
+    <Style Selector="DataGridColumnHeader:sortascending /template/ ui|FontIcon#SortIcon">
+      <Setter Property="FontSize" Value="10" />
+      <Setter Property="Margin" Value="0" />
+    </Style>
+    <Style Selector="DataGridColumnHeader:sortdescending /template/ ui|FontIcon#SortIcon">
+      <Setter Property="FontSize" Value="10" />
+      <Setter Property="Margin" Value="0" />
+    </Style>
+    <Style Selector="DataGridCell">
+      <Setter Property="FontSize" Value="16" />
+    </Style>
+    <Style Selector="DataGrid">
+      <Setter Property="ClipToBounds" Value="True" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="BorderBrush" Value="{DynamicResource PremiumCardStrokeBrush}" />
+    </Style>
+    <Style Selector="ListBox">
+      <Setter Property="ClipToBounds" Value="True" />
+    </Style>
+    <Style Selector="DataGrid DataGridCell:current /template/ Grid#FocusVisual">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="TextBlock#CellTextBlock">
+      <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+      <Setter Property="Margin" Value="12,0" />
+      <Setter Property="HorizontalAlignment" Value="Left" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!-- AdvancedImage -->
+    <Style Selector="img|AdvancedImage.itemicon">
+      <Setter Property="Width" Value="32" />
+      <Setter Property="Height" Value="32" />
+      <Setter Property="Stretch" Value="None" />
+    </Style>
+  </Application.Styles>
+
+</Application>

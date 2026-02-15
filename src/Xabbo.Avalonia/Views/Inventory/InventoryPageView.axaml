@@ -1,0 +1,67 @@
+<UserControl
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:ui="using:FluentAvalonia.UI.Controls"
+  xmlns:ic="using:FluentIcons.Avalonia.Fluent"
+  xmlns:icm="using:FluentIcons.Avalonia.Fluent.MarkupExtensions"
+  xmlns:img="using:AsyncImageLoader"
+  xmlns:controls="using:Xabbo.Avalonia.Controls"
+  xmlns:services="using:Xabbo.Avalonia.Services"
+  xmlns:vm="using:Xabbo.ViewModels"
+  xmlns:v="using:Xabbo.Avalonia.Views"
+  mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+  x:Class="Xabbo.Avalonia.Views.InventoryPageView"
+  x:DataType="vm:InventoryPageViewModel"
+  Classes="pageRoot"
+>
+  <UserControl.Styles>
+    <Style Selector="TabItem">
+      <Setter Property="MinHeight" Value="32" />
+      <Setter Property="Padding" Value="8,0" />
+    </Style>
+    <Style Selector="TabItem:selected /template/ Rectangle#PART_SelectedPipe">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+  </UserControl.Styles>
+  <controls:Loading
+    DataContext="{Binding Inventory}"
+    IsLoading="{Binding IsBusy}"
+    LoadingContent="{Binding StatusText}"
+    ContentFadeOpacity="0.1"
+    CancelCommand="{Binding CancelCmd}"
+  >
+    <Panel>
+      <controls:StatusTabControl Status="{Binding ItemCountText}" Padding="0" TabStripPlacement="Bottom">
+        <TabItem>
+          <TabItem.Header>
+            <StackPanel Orientation="Horizontal" Spacing="4">
+              <ic:SymbolIcon VerticalAlignment="Center" Symbol="Grid" />
+              <TextBlock VerticalAlignment="Center" Text="{Binding [inventory.tab.items]}" />
+            </StackPanel>
+          </TabItem.Header>
+          <v:InventoryStacksView />
+        </TabItem>
+        <TabItem Classes="modern">
+          <TabItem.Header>
+            <StackPanel Orientation="Horizontal" Spacing="4">
+              <ic:SymbolIcon VerticalAlignment="Center" Symbol="Image" />
+              <TextBlock VerticalAlignment="Center" Text="{Binding [inventory.tab.photos]}" />
+            </StackPanel>
+          </TabItem.Header>
+          <v:InventoryPhotosView />
+        </TabItem>
+      </controls:StatusTabControl>
+      <controls:InfoOverlay
+        IsVisible="{Binding !IsBusy}"
+        ShowContent="{Binding ItemCount, Converter={StaticResource EqConverter}, ConverterParameter={StaticResource Zero}}"
+        Text="{Binding EmptyText}"
+      >
+        <Button Padding="5" HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding LoadCmd}">
+          <ic:SymbolIcon HorizontalAlignment="Center" VerticalAlignment="Center" Symbol="ArrowSync" />
+        </Button>
+      </controls:InfoOverlay>
+    </Panel>
+  </controls:Loading>
+</UserControl>
