@@ -205,6 +205,7 @@ public static class ViewModelLocator
         Splatr.RegisterLazySingleton<RoomPageViewModel>();
         Splatr.RegisterLazySingleton<NavigatorPageViewModel>();
         Splatr.RegisterLazySingleton<GameDataPageViewModel>();
+        Splatr.RegisterLazySingleton<LanguageTogglePageViewModel>();
         Splatr.RegisterLazySingleton<InfoPageViewModel>();
         Splatr.RegisterLazySingleton<SettingsPageViewModel>();
 

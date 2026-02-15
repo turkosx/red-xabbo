@@ -58,6 +58,7 @@
           <ui:NavigationViewItem
             IconSource="{Binding Icon}"
             Content="{Binding Header}"
+            SelectsOnInvoked="{Binding SelectsOnInvoked}"
           />
         </DataTemplate>
       </ui:NavigationView.MenuItemTemplate>
@@ -81,35 +82,5 @@
         </DataTemplate>
       </ui:NavigationView.ContentTemplate>
     </ui:NavigationView>
-
-    <Border
-      Classes="card"
-      ZIndex="20"
-      Margin="0,8,12,0"
-      Padding="6,3"
-      HorizontalAlignment="Right"
-      VerticalAlignment="Top"
-      CornerRadius="6"
-      Background="{DynamicResource PremiumCardBackgroundBrush}"
-      BorderBrush="{DynamicResource PremiumCardStrokeBrush}"
-      BorderThickness="1"
-      ToolTip.Tip="{Binding LanguageToolTip}"
-    >
-      <StackPanel Orientation="Horizontal" Spacing="6">
-        <ic:SymbolIcon VerticalAlignment="Center" Symbol="Globe" />
-        <ComboBox
-          Width="86"
-          HorizontalAlignment="Left"
-          ItemsSource="{Binding LanguageOptions}"
-          SelectedItem="{Binding SelectedLanguageOption}"
-        >
-          <ComboBox.ItemTemplate>
-            <DataTemplate>
-              <TextBlock Text="{Binding Label}" />
-            </DataTemplate>
-          </ComboBox.ItemTemplate>
-        </ComboBox>
-      </StackPanel>
-    </Border>
   </Grid>
 </UserControl>

@@ -23,6 +23,7 @@ public abstract class PageViewModel : ViewModelBase
         this.RaisePropertyChanged("Item[]");
     }
 
+    public virtual bool SelectsOnInvoked => true;
     public abstract string Header { get; }
     public abstract IconSource? Icon { get; }
 }

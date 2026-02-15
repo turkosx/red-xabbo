@@ -25,6 +25,12 @@ public partial class MainView : UserControl
     {
         if (ViewModel is null) return;
 
+        if (e.InvokedItemContainer.DataContext is LanguageTogglePageViewModel)
+        {
+            ((System.Windows.Input.ICommand)ViewModel.ToggleLanguageCmd).Execute(null);
+            return;
+        }
+
         if (e.InvokedItemContainer.DataContext is PageViewModel pageVm)
             ViewModel.SelectedPage = pageVm;
     }
