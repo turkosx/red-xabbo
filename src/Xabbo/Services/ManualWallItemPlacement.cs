@@ -65,5 +65,14 @@ public sealed class ManualWallItemPlacement(
 
     public void ReportPlacementFailure(WallLocation location) { }
 
-    public void Dispose() { }
+    public void Dispose()
+    {
+        _intercept?.Dispose();
+        _intercept = null;
+
+        lock (_points)
+        {
+            _points.Clear();
+        }
+    }
 }

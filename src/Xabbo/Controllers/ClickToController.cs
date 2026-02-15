@@ -73,8 +73,6 @@ public partial class ClickToController(
         if (!_roomManager.EnsureInRoom(out IRoom? room))
             return;
 
-        e.Block();
-
         var usersOnTile = room.Avatars
             .OfType<IUser>()
             .Where(user =>
@@ -85,6 +83,7 @@ public partial class ClickToController(
 
         if (usersOnTile is [ IUser user ])
         {
+            e.Block();
             HandleClickUser(user);
         }
         else if (usersOnTile.Length > 1)

@@ -20,6 +20,7 @@ using Xabbo.Core.GameData;
 using Xabbo.Services.Abstractions;
 using Xabbo.ViewModels;
 using Xabbo.Utility;
+using Xabbo.Avalonia.Utility;
 using Xabbo.Avalonia.Views;
 
 using IApplicationLifetime = Avalonia.Controls.ApplicationLifetimes.IApplicationLifetime;
@@ -269,7 +270,28 @@ public sealed class XabboAppManager : IApplicationManager
         }
     }
 
-    public void FlashWindow() { }
+    public void FlashWindow()
+    {
+        Dispatcher.UIThread.Post(() =>
+        {
+            try
+            {
+                var window = GetMainWindow();
+                if (window is null || !OperatingSystem.IsWindows())
+                    return;
+
+                IntPtr handle = window.TryGetPlatformHandle()?.Handle ?? IntPtr.Zero;
+                if (handle == IntPtr.Zero)
+                    return;
+
+                WindowUtility.FlashWindow(handle);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogDebug(ex, "Failed to flash the window.");
+            }
+        });
+    }
 
     private void SetStatus(string status)
     {

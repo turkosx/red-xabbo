@@ -164,7 +164,9 @@ public partial class FurniActionsComponent : Component
                     try
                     {
                         var stats = await _api.FetchMarketplaceItemStats(Ext.Session.Hotel, furni.Type, furniInfo.Identifier);
-                        int totalSold = stats.History.Sum(x => x.TotalSoldItems);
+                        int totalSold = stats.History.Count > 0
+                            ? stats.History.Sum(x => x.TotalSoldItems)
+                            : stats.SoldItemCount;
                         _xabbot.ShowMessage(
                             $"{furniInfo.Name} [{furniInfo.Identifier}]: average {stats.AveragePrice}c / "
                             + $"{totalSold} sold in the last {stats.HistoryLimitInDays} days",

@@ -54,6 +54,7 @@ public class GameStateService : ReactiveObject, IGameStateService
 
     private async void OnConnected(ConnectedEventArgs e)
     {
+        IsConnected = true;
         Session = e.Session;
         Connected?.Invoke(e);
 
@@ -70,6 +71,7 @@ public class GameStateService : ReactiveObject, IGameStateService
 
     private void OnDisconnected()
     {
+        IsConnected = false;
         Session = Session.None;
         Disconnected?.Invoke();
     }

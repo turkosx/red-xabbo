@@ -34,6 +34,7 @@ public sealed class HabboApi : IHabboApi
 
     public Task<Web.Dto.MarketplaceItemStats> FetchMarketplaceItemStats(Hotel hotel, ItemType type, string identifier, CancellationToken cancellationToken = default)
     {
+        string encodedIdentifier = Uri.EscapeDataString(identifier);
         string? typeString = type switch
         {
             ItemType.Floor => "roomItem",
@@ -42,12 +43,13 @@ public sealed class HabboApi : IHabboApi
         };
 
         return GetRequiredDataAsync<Web.Dto.MarketplaceItemStats>(
-            hotel, $"/api/public/marketplace/stats/{typeString}/{identifier}", cancellationToken);
+            hotel, $"/api/public/marketplace/stats/{typeString}/{encodedIdentifier}", cancellationToken);
     }
 
     public Task<Web.Dto.PhotoData> FetchPhotoDataAsync(Hotel hotel, string photoId, CancellationToken cancellationToken = default)
     {
+        string encodedPhotoId = Uri.EscapeDataString(photoId);
         return GetRequiredDataAsync<Web.Dto.PhotoData>(
-            hotel, $"/photodata/public/furni/{photoId}", cancellationToken);
+            hotel, $"/photodata/public/furni/{encodedPhotoId}", cancellationToken);
     }
 }
