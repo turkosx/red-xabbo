@@ -9,14 +9,14 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/.NET-8-00f5d4?style=flat-square&logo=dotnet&logoColor=ffffff&labelColor=0b0f14" alt=".NET 8" />
-  <img src="https://img.shields.io/badge/C%23-12-00f5d4?style=flat-square&logo=csharp&logoColor=ffffff&labelColor=0b0f14" alt="C#" />
-  <img src="https://img.shields.io/badge/Avalonia-UI-00f5d4?style=flat-square&labelColor=0b0f14" alt="Avalonia UI" />
-  <img src="https://img.shields.io/badge/Xabbo-Framework-00f5d4?style=flat-square&labelColor=0b0f14" alt="Xabbo Framework" />
-  <img src="https://img.shields.io/badge/G--Earth-Extension-00f5d4?style=flat-square&labelColor=0b0f14" alt="G-Earth Extension" />
-  <img src="https://img.shields.io/badge/Platforms-Windows%20%7C%20Linux%20%7C%20macOS-00f5d4?style=flat-square&labelColor=0b0f14" alt="Platforms" />
-  <img src="https://img.shields.io/badge/Habbo-Flash%20%7C%20Origins-00f5d4?style=flat-square&labelColor=0b0f14" alt="Habbo Clients" />
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-00f5d4?style=flat-square&labelColor=0b0f14" alt="License MIT" /></a>
+  <img src="https://img.shields.io/badge/.NET-8-ff3b30?style=flat-square&logo=dotnet&logoColor=ffffff&labelColor=0b0f14" alt=".NET 8" />
+  <img src="https://img.shields.io/badge/C%23-12-ff3b30?style=flat-square&logo=csharp&logoColor=ffffff&labelColor=0b0f14" alt="C#" />
+  <img src="https://img.shields.io/badge/Avalonia-UI-ff3b30?style=flat-square&labelColor=0b0f14" alt="Avalonia UI" />
+  <img src="https://img.shields.io/badge/Xabbo-Framework-ff3b30?style=flat-square&labelColor=0b0f14" alt="Xabbo Framework" />
+  <img src="https://img.shields.io/badge/G--Earth-Extension-ff3b30?style=flat-square&labelColor=0b0f14" alt="G-Earth Extension" />
+  <img src="https://img.shields.io/badge/Platforms-Windows%20%7C%20Linux%20%7C%20macOS-ff3b30?style=flat-square&labelColor=0b0f14" alt="Platforms" />
+  <img src="https://img.shields.io/badge/Habbo-Flash%20%7C%20Origins-ff3b30?style=flat-square&labelColor=0b0f14" alt="Habbo Clients" />
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-ff3b30?style=flat-square&labelColor=0b0f14" alt="License MIT" /></a>
 </p>
 
 <p align="center">
@@ -27,28 +27,28 @@
 </p>
 
 <p align="center">
-  <img src="https://cdn.simpleicons.org/dotnet/00f5d4" height="20" alt=".NET" />
-  <img src="https://cdn.simpleicons.org/avaloniaui/00f5d4" height="20" alt="Avalonia" />
-  <img src="https://cdn.simpleicons.org/githubactions/00f5d4" height="20" alt="GitHub Actions" />
-  <img src="https://cdn.simpleicons.org/linux/00f5d4" height="20" alt="Linux" />
-  <img src="https://cdn.simpleicons.org/apple/00f5d4" height="20" alt="macOS" />
-  <img src="https://cdn.simpleicons.org/windows/00f5d4" height="20" alt="Windows" />
+  <img src="https://cdn.simpleicons.org/dotnet/ff3b30" height="20" alt=".NET" />
+  <img src="https://cdn.simpleicons.org/avaloniaui/ff3b30" height="20" alt="Avalonia" />
+  <img src="https://cdn.simpleicons.org/githubactions/ff3b30" height="20" alt="GitHub Actions" />
+  <img src="https://cdn.simpleicons.org/linux/ff3b30" height="20" alt="Linux" />
+  <img src="https://cdn.simpleicons.org/apple/ff3b30" height="20" alt="macOS" />
+  <img src="https://img.shields.io/badge/Windows-ff3b30?style=flat-square&logo=windows&logoColor=ffffff&labelColor=0b0f14" height="20" alt="Windows" />
 </p>
 
 ---
 
 ## Sumario
-- <img src="https://cdn.simpleicons.org/github/00f5d4" height="14" alt="" /> [Visao geral](#visao-geral)
-- <img src="https://cdn.simpleicons.org/dotnet/00f5d4" height="14" alt="" /> [Requisitos](#requisitos)
-- <img src="https://cdn.simpleicons.org/git/00f5d4" height="14" alt="" /> [Setup rapido](#setup-rapido)
-- <img src="https://cdn.simpleicons.org/dotnet/00f5d4" height="14" alt="" /> [Executar em desenvolvimento](#executar-em-desenvolvimento)
-- <img src="https://cdn.simpleicons.org/githubactions/00f5d4" height="14" alt="" /> [Build e testes](#build-e-testes)
-- <img src="https://cdn.simpleicons.org/gnubash/00f5d4" height="14" alt="" /> [Empacotar extensao](#empacotar-extensao)
-- <img src="https://cdn.simpleicons.org/task/00f5d4" height="14" alt="" /> [Scripts do Taskfile](#scripts-do-taskfile)
-- <img src="https://cdn.simpleicons.org/githubactions/00f5d4" height="14" alt="" /> [CI](#ci)
-- <img src="https://cdn.simpleicons.org/github/00f5d4" height="14" alt="" /> [Estrutura do repositorio](#estrutura-do-repositorio)
-- <img src="https://cdn.simpleicons.org/wrench/00f5d4" height="14" alt="" /> [Troubleshooting](#troubleshooting)
-- <img src="https://cdn.simpleicons.org/bookstack/00f5d4" height="14" alt="" /> [Licenca](#licenca)
+- <img src="https://cdn.simpleicons.org/github/ff3b30" height="14" alt="" /> [Visao geral](#visao-geral)
+- <img src="https://cdn.simpleicons.org/dotnet/ff3b30" height="14" alt="" /> [Requisitos](#requisitos)
+- <img src="https://cdn.simpleicons.org/git/ff3b30" height="14" alt="" /> [Setup rapido](#setup-rapido)
+- <img src="https://cdn.simpleicons.org/dotnet/ff3b30" height="14" alt="" /> [Executar em desenvolvimento](#executar-em-desenvolvimento)
+- <img src="https://cdn.simpleicons.org/githubactions/ff3b30" height="14" alt="" /> [Build e testes](#build-e-testes)
+- <img src="https://cdn.simpleicons.org/gnubash/ff3b30" height="14" alt="" /> [Empacotar extensao](#empacotar-extensao)
+- <img src="https://cdn.simpleicons.org/task/ff3b30" height="14" alt="" /> [Scripts do Taskfile](#scripts-do-taskfile)
+- <img src="https://cdn.simpleicons.org/githubactions/ff3b30" height="14" alt="" /> [CI](#ci)
+- <img src="https://cdn.simpleicons.org/github/ff3b30" height="14" alt="" /> [Estrutura do repositorio](#estrutura-do-repositorio)
+- <img src="https://cdn.simpleicons.org/sentry/ff3b30" height="14" alt="" /> [Troubleshooting](#troubleshooting)
+- <img src="https://cdn.simpleicons.org/bookstack/ff3b30" height="14" alt="" /> [Licenca](#licenca)
 
 ## Visao geral
 - Extensao para G-Earth com foco em automacoes e operacoes de sala.
@@ -56,6 +56,12 @@
 - Compatibilidade com clientes Habbo Flash e Origins.
 - Distribuicao multiplataforma (Windows, Linux, macOS).
 - Baseada no ecossistema Xabbo (`common`, `messages`, `gearth`, `core`).
+
+Compatibilidade atual:
+- Sistemas: Windows, Linux, macOS
+- Clientes Habbo: Flash e Origins
+- Runtime: .NET 8
+- UI: Avalonia (EN/PT-BR)
 
 ## Requisitos
 Para usar a extensao (release):
