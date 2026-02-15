@@ -5,19 +5,36 @@
 <h1 align="center">redxabbo</h1>
 
 <p align="center">
-  Extensao para G-Earth focada em facilitar o uso do Habbo no dia a dia.
+  Extensao para G-Earth focada em produtividade, praticidade e qualidade de uso no Habbo.
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/.NET-8-ff3b30?style=flat-square&logo=dotnet&logoColor=ffffff&labelColor=0b0f14" alt=".NET 8" />
+  <img src="https://img.shields.io/badge/C%23-12-ff3b30?style=flat-square&logo=csharp&logoColor=ffffff&labelColor=0b0f14" alt="C#" />
+  <img src="https://img.shields.io/badge/Avalonia-UI-ff3b30?style=flat-square&labelColor=0b0f14" alt="Avalonia UI" />
+  <img src="https://img.shields.io/badge/G--Earth-Extension-ff3b30?style=flat-square&labelColor=0b0f14" alt="G-Earth Extension" />
+  <img src="https://img.shields.io/badge/Platforms-Windows%20%7C%20Linux%20%7C%20macOS-ff3b30?style=flat-square&labelColor=0b0f14" alt="Platforms" />
+  <img src="https://img.shields.io/badge/Habbo-Flash%20%7C%20Origins-ff3b30?style=flat-square&labelColor=0b0f14" alt="Habbo Clients" />
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-ff3b30?style=flat-square&labelColor=0b0f14" alt="License MIT" /></a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/turkosx/red-xabbo">Repositorio</a> |
+  <a href="https://github.com/turkosx/red-xabbo/releases">Releases</a> |
+  <a href="https://github.com/turkosx/red-xabbo/issues">Suporte / Issues</a> |
+  <a href="LICENSE">Licenca</a>
 </p>
 
 ---
 
-## O que e o redxabbo
+## Visao geral
 O `redxabbo` e uma extensao para usar junto com o `G-Earth`.
 
-Ela adiciona uma interface simples com ferramentas de qualidade de vida, como:
+Ela oferece uma interface simples com ferramentas de uso diario, como:
 - controles de sala e chat
 - utilitarios de visualizacao
 - busca de usuario em quartos (`Search/Buscar`)
-- suporte a idioma (`PT-BR` e `EN`)
+- suporte de idioma (`PT-BR` e `EN`)
 
 Compatibilidade:
 - Sistemas: Windows, Linux, macOS
@@ -27,35 +44,36 @@ Compatibilidade:
 ---
 
 ## Requisitos
-Antes de usar:
-1. Instale o `G-Earth`.
-2. Instale o `.NET 8 Runtime`:
+Para usar:
+1. G-Earth instalado e funcionando.
+2. `.NET 8 Runtime` instalado:
 https://dotnet.microsoft.com/en-us/download/dotnet/8.0
 
 ---
 
 ## Instalacao (usuario final)
-### Opcao 1: Releases do projeto
-1. Acesse:
+### Opcao 1: pelo release oficial
+1. Abra:
 https://github.com/turkosx/red-xabbo/releases
-2. Baixe os arquivos da versao mais recente.
-3. Importe a extensao no G-Earth e abra normalmente.
+2. Baixe a versao mais recente.
+3. Importe/instale no G-Earth.
+4. Inicie a extensao `redxabbo`.
 
-### Opcao 2: Extensao ja empacotada
+### Opcao 2: pacote pronto
 Se voce recebeu `extension.zip` e `extension.json`:
 1. Abra o G-Earth.
-2. Instale/import o pacote da extensao.
-3. Inicie a extensao `redxabbo`.
+2. Importe o pacote da extensao.
+3. Inicie o `redxabbo`.
 
 ---
 
-## Como usar
+## Primeiro uso
 1. Abra o G-Earth.
 2. Conecte no Habbo pelo G-Earth.
 3. Inicie o `redxabbo`.
-4. Use as abas da interface conforme sua necessidade.
+4. Use as abas da interface.
 
-Abas principais:
+Abas mais usadas:
 - `General`: configuracoes rapidas, ferramentas e busca
 - `Room`: informacoes e operacoes de quarto
 - `Chat`: monitoramento de mensagens
@@ -65,59 +83,49 @@ Abas principais:
 ---
 
 ## Busca de usuario (Search / Buscar)
-Voce pode buscar um usuario em quartos de duas formas.
-
-### Pela interface
-1. Va em `General > Buscar`.
+Para buscar um usuario:
+1. Abra `General > Buscar`.
 2. Digite o nome do usuario.
 3. Clique em `Buscar`.
 4. Acompanhe o `Status`.
-5. Para interromper, clique em `Parar`.
+5. Clique em `Parar` se quiser interromper.
 
-Quando encontrar, a extensao volta para o quarto e recarrega o ambiente.
-
-### Pelo chat (atalho)
-- `:search --user NomeDoUsuario`
-- `:search --stop`
+Quando encontra, a extensao retorna ao quarto encontrado e recarrega o ambiente.
 
 ---
 
-## Trocar idioma
+## Idioma
 O redxabbo suporta `PT-BR` e `EN`.
 
-Voce pode trocar idioma:
-- no botao de idioma na interface principal, ou
-- em `Settings` (quando disponivel na sua versao)
+Voce pode alterar idioma pelo botao de idioma na interface principal ou pelas configuracoes.
 
 ---
 
 ## Problemas comuns
 ### A extensao nao abre
-- Verifique se o `.NET 8 Runtime` esta instalado.
-- Reinicie G-Earth e redxabbo.
+- Verifique o `.NET 8 Runtime`.
+- Feche e abra novamente o G-Earth.
 
 ### A extensao nao conecta
 - Confirme que o Habbo foi aberto pelo G-Earth.
-- Verifique se o G-Earth esta ativo e conectado.
+- Verifique se o G-Earth esta conectado.
 
 ### Busca nao encontra o usuario
-- O usuario pode nao estar em quarto aberto naquele momento.
+- O usuario pode nao estar em quarto aberto no momento.
 - Tente novamente apos alguns segundos.
-- Use o nome exatamente como aparece no Habbo.
+- Confira o nome exatamente como aparece no Habbo.
 
 ---
 
 ## Suporte
 - Repositorio:
 https://github.com/turkosx/red-xabbo
-- Reportar problema:
+- Reportar bugs / pedir melhorias:
 https://github.com/turkosx/red-xabbo/issues
 
 ---
 
 ## Para desenvolvedores (opcional)
-Se voce for compilar localmente:
-
 ```bash
 git clone https://github.com/turkosx/red-xabbo.git
 cd red-xabbo
@@ -129,5 +137,5 @@ dotnet run --project src/Xabbo.Avalonia
 ---
 
 ## Licenca
-Projeto sob licenca MIT.
-Consulte `LICENSE`.
+Este projeto usa a licenca MIT.
+Veja o arquivo `LICENSE`.
