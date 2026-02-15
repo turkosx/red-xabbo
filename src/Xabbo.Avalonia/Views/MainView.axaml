@@ -4,7 +4,6 @@
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
   xmlns:ui="using:FluentAvalonia.UI.Controls"
-  xmlns:uip="using:FluentAvalonia.UI.Controls.Primitives"
   xmlns:ic="using:FluentIcons.Avalonia.Fluent"
   xmlns:v="using:Xabbo.Avalonia.Views"
   xmlns:vm="using:Xabbo.ViewModels"
@@ -17,107 +16,14 @@
   <Grid Grid.Row="1">
     <ui:NavigationView
       Name="NavView"
-      PaneDisplayMode="Top"
+      PaneDisplayMode="LeftCompact"
+      IsPaneOpen="False"
       IsSettingsVisible="False"
       MenuItemsSource="{Binding Pages}"
+      FooterMenuItemsSource="{Binding FooterPages}"
       SelectedItem="{Binding SelectedPage}"
       Content="{Binding SelectedPage, Mode=OneWay}"
     >
-      <ui:NavigationView.Styles>
-        <Style Selector="ui|NavigationViewItem">
-          <Setter Property="Width" Value="48" />
-          <Setter Property="MinWidth" Value="48" />
-          <Setter Property="HorizontalContentAlignment" Value="Center" />
-          <Setter Property="CornerRadius" Value="8" />
-          <Setter Property="Background" Value="Transparent" />
-          <Setter Property="Transitions">
-            <Transitions />
-          </Setter>
-        </Style>
-
-        <!-- Disable animated selection bar to avoid ghosting between icons -->
-        <Style Selector="ui|NavigationViewItem /template/ Rectangle#SelectionIndicator">
-          <Setter Property="IsVisible" Value="False" />
-        </Style>
-        <Style Selector="ui|NavigationViewItem /template/ Border#SelectionIndicator">
-          <Setter Property="IsVisible" Value="False" />
-        </Style>
-        <Style Selector="ui|NavigationViewItem /template/ Path#SelectionIndicator">
-          <Setter Property="IsVisible" Value="False" />
-        </Style>
-        <Style Selector="ui|NavigationViewItem /template/ Rectangle#ActiveIndicator">
-          <Setter Property="IsVisible" Value="False" />
-        </Style>
-        <Style Selector="ui|NavigationViewItem /template/ Border#ActiveIndicator">
-          <Setter Property="IsVisible" Value="False" />
-        </Style>
-        <Style Selector="ui|NavigationViewItem /template/ Path#ActiveIndicator">
-          <Setter Property="IsVisible" Value="False" />
-        </Style>
-        <Style Selector="ui|NavigationView /template/ Rectangle#SelectionIndicator">
-          <Setter Property="IsVisible" Value="False" />
-        </Style>
-        <Style Selector="ui|NavigationView /template/ Border#SelectionIndicator">
-          <Setter Property="IsVisible" Value="False" />
-        </Style>
-        <Style Selector="ui|NavigationView /template/ Path#SelectionIndicator">
-          <Setter Property="IsVisible" Value="False" />
-        </Style>
-        <Style Selector="ui|NavigationView /template/ Rectangle#SelectionIndicatorPointer">
-          <Setter Property="IsVisible" Value="False" />
-        </Style>
-        <Style Selector="ui|NavigationView /template/ Border#SelectionIndicatorPointer">
-          <Setter Property="IsVisible" Value="False" />
-        </Style>
-        <Style Selector="ui|NavigationView /template/ Path#SelectionIndicatorPointer">
-          <Setter Property="IsVisible" Value="False" />
-        </Style>
-        <Style Selector="uip|NavigationViewItemPresenter">
-          <Setter Property="Transitions">
-            <Transitions />
-          </Setter>
-        </Style>
-        <Style Selector="uip|NavigationViewItemPresenter /template/ Grid#SelectionIndicatorGrid">
-          <Setter Property="IsVisible" Value="False" />
-        </Style>
-        <Style Selector="uip|NavigationViewItemPresenter /template/ Rectangle#SelectionIndicator">
-          <Setter Property="IsVisible" Value="False" />
-        </Style>
-        <Style Selector="uip|NavigationViewItemPresenter /template/ Border#SelectionIndicator">
-          <Setter Property="IsVisible" Value="False" />
-        </Style>
-        <Style Selector="uip|NavigationViewItemPresenter /template/ Path#SelectionIndicator">
-          <Setter Property="IsVisible" Value="False" />
-        </Style>
-        <Style Selector="uip|NavigationViewItemPresenter /template/ Rectangle#SelectionIndicatorPointer">
-          <Setter Property="IsVisible" Value="False" />
-        </Style>
-        <Style Selector="uip|NavigationViewItemPresenter /template/ Border#SelectionIndicatorPointer">
-          <Setter Property="IsVisible" Value="False" />
-        </Style>
-        <Style Selector="uip|NavigationViewItemPresenter /template/ Path#SelectionIndicatorPointer">
-          <Setter Property="IsVisible" Value="False" />
-        </Style>
-        <Style Selector="uip|NavigationViewItemPresenter /template/ Rectangle#activeIndicator">
-          <Setter Property="IsVisible" Value="False" />
-        </Style>
-        <Style Selector="uip|NavigationViewItemPresenter /template/ Border#activeIndicator">
-          <Setter Property="IsVisible" Value="False" />
-        </Style>
-        <Style Selector="uip|NavigationViewItemPresenter /template/ Path#activeIndicator">
-          <Setter Property="IsVisible" Value="False" />
-        </Style>
-
-        <!-- Static selected state -->
-        <Style Selector="ui|NavigationViewItem:selected">
-          <Setter Property="Background" Value="{DynamicResource PremiumAccentGradientBrush}" />
-          <Setter Property="Foreground" Value="White" />
-        </Style>
-        <Style Selector="ui|NavigationViewItem:selected:pointerover">
-          <Setter Property="Background" Value="{DynamicResource PremiumAccentGradientBrush}" />
-          <Setter Property="Foreground" Value="White" />
-        </Style>
-      </ui:NavigationView.Styles>
       <ui:NavigationView.DataTemplates>
         <DataTemplate DataType="vm:GeneralPageViewModel">
           <v:GeneralPage />
@@ -151,7 +57,7 @@
         <DataTemplate DataType="vm:PageViewModel">
           <ui:NavigationViewItem
             IconSource="{Binding Icon}"
-            ToolTip.Tip="{Binding Header}"
+            Content="{Binding Header}"
           />
         </DataTemplate>
       </ui:NavigationView.MenuItemTemplate>

@@ -67,8 +67,8 @@ public class MainViewModel : ViewModelBase
         _localizer = localizationService;
         _launcher = launcher;
 
-        Pages = [general, wardrobe, inventory, friends, chat, room, gameData, info, settings];
-        FooterPages = [];
+        Pages = [general, wardrobe, inventory, friends, chat, room, gameData];
+        FooterPages = [info, settings];
         SelectedPage = general;
 
         SyncSelectedLanguageFromService();
