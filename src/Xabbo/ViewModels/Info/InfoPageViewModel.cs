@@ -13,6 +13,14 @@ public sealed class InfoPageViewModel : PageViewModel
     public override string Header => T("page.info");
     public override IconSource? Icon { get; } = new SymbolIconSource { Symbol = Symbol.Info };
 
+    public string AppName => "redxabbo";
+    public string ProjectName => "red-xabbo";
+    public string DeveloperTag => "@tur.ko";
+    public string DeveloperUrl => "https://github.com/turkosx";
+    public string RepositoryUrl => "https://github.com/turkosx/red-xabbo";
+    public string RepositoryDisplay => "github.com/turkosx/red-xabbo";
+    public string IssuesUrl => "https://github.com/turkosx/red-xabbo/issues/new";
+
     public string Version { get; }
     public string XabboCommonVersion { get; }
     public string XabboGEarthVersion { get; }

@@ -136,7 +136,7 @@ public sealed class XabboAppManager : IApplicationManager
         }
 
         List<string?> errorDetails = [
-            $"xabbo {Assembly.GetEntryAssembly().GetVersionString()}",
+            $"redxabbo {Assembly.GetEntryAssembly().GetVersionString()}",
             ""
         ];
 
@@ -204,7 +204,7 @@ public sealed class XabboAppManager : IApplicationManager
                 {
                     _application.Resources["IsConnecting"] = false;
                     _application.Resources["IsConnected"] = false;
-                    _application.Resources["AppStatus"] = "Connection to G-Earth has ended.\nxabbo will now shut down.";
+                    _application.Resources["AppStatus"] = "Connection to G-Earth has ended.\nredxabbo will now shut down.";
                 });
                 await Task.Delay(5000);
                 _hostLifetime.StopApplication();

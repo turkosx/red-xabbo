@@ -146,7 +146,7 @@ public partial class CommandManager
         {
             Process.Start(new ProcessStartInfo
             {
-                FileName = "https://github.com/xabbo/xabbo#commands",
+                FileName = "https://github.com/turkosx/red-xabbo",
                 UseShellExecute = true
             });
         }

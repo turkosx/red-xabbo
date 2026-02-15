@@ -82,9 +82,9 @@ public static class ViewModelLocator
     {
         Splatr.RegisterConstant(new GEarthOptions() with
         {
-            Name = "xabbo",
-            Description = "enhanced habbo",
-            Author = "b7",
+            Name = "redxabbo",
+            Description = "enhanced habbo extension",
+            Author = "@tur.ko",
             Version = Assembly.GetEntryAssembly().GetVersionString(false)
         });
         Splatr.RegisterLazySingleton<GEarthExtension>();

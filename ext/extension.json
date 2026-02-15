@@ -1,17 +1,17 @@
 {
-  "title": "xabbo",
+  "title": "redxabbo",
   "description": "enhanced habbo\n\nrequires the .NET 8 Runtime",
   "authors": [
     {
-      "name": "b7",
-      "discord": "xb7c"
+      "name": "tur.ko",
+      "discord": "tur.ko"
     }
   ],
   "version": "{Version}",
   "categories": ["Usability"],
 
-  "source": "https://github.com/xabbo/xabbo",
-  "readme": "https://github.com/xabbo/xabbo/blob/main/README.md",
+  "source": "https://github.com/turkosx/red-xabbo",
+  "readme": "https://github.com/turkosx/red-xabbo/blob/main/README.md",
 
   "stable": true,
 

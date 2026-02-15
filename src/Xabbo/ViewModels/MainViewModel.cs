@@ -10,7 +10,7 @@ namespace Xabbo.ViewModels;
 public class MainViewModel : ViewModelBase
 {
 #pragma warning disable CA1822 // Mark members as static
-    public string Title => "xabbo";
+    public string Title => "redxabbo";
 #pragma warning restore CA1822 // Mark members as static
 
     private readonly ILauncherService _launcher;
@@ -139,7 +139,7 @@ public class MainViewModel : ViewModelBase
 
     private void ReportError()
     {
-        _launcher.Launch("https://github.com/xabbo/xabbo/issues/new", new()
+        _launcher.Launch("https://github.com/turkosx/red-xabbo/issues/new", new()
         {
             ["body"] = [$"(describe the issue here)\n\n```txt\n{AppError}\n```"]
         });

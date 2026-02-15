@@ -15,11 +15,9 @@
   x:DataType="vm:MainViewModel"
   Icon="/Assets/xabbo-skull-64.png"
   WindowStartupLocation="CenterScreen"
-  Title="xabbo"
+  Title="redxabbo"
   Width="980" Height="760"
-  MinWidth="980" MinHeight="760"
-  MaxWidth="980" MaxHeight="760"
-  CanResize="False"
+  CanResize="True"
   FontSize="16"
   Classes.isorigins="{DynamicResource IsOrigins}"
   Classes.ismodern="{DynamicResource IsModern}"
@@ -103,16 +101,18 @@
     </Style>
   </wnd:AppWindow.Styles>
   <Grid RowDefinitions="32,*">
-    <Grid Name="TitleBarHost" ColumnDefinitions="48,*,Auto,0" ZIndex="1000" Background="{DynamicResource PremiumChromeGradientBrush}">
+    <Grid Name="TitleBarHost" ColumnDefinitions="56,*,Auto,0" ZIndex="1000" Background="{DynamicResource PremiumChromeGradientBrush}">
       <Image
-        Margin="0,8,0,-8"
-        Source="avares://Xabbo.Avalonia/Assets/xabbo-skull-128.png"
-        Width="30" Height="30"
+        Margin="0,0,0,0"
+        Source="avares://Xabbo.Avalonia/Assets/xabbo-skull-hd-crop.png"
+        Width="24" Height="24"
+        RenderOptions.BitmapInterpolationMode="HighQuality"
         HorizontalAlignment="Center"
         VerticalAlignment="Center"
       />
       <TextBlock
         Grid.Column="1"
+        Margin="4,0,0,0"
         VerticalAlignment="Center" Text="{Binding Title}"
       />
       <ToggleButton
