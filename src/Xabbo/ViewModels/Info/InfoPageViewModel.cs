@@ -17,6 +17,12 @@ public sealed class InfoPageViewModel : PageViewModel
     public string ProjectName => "red-xabbo";
     public string DeveloperTag => "@tur.ko";
     public string DeveloperUrl => "https://github.com/turkosx";
+    public string CreditAuthorName => "b7c";
+    public string CreditAuthorUrl => "https://github.com/b7c";
+    public string CreditContributorName => "QDaves";
+    public string CreditContributorUrl => "https://github.com/QDaves";
+    public string CreditCommunityName => "G-Earth Discord";
+    public string CreditCommunityUrl => "https://discord.gg/Bk68pNM7SE";
     public string RepositoryUrl => "https://github.com/turkosx/red-xabbo";
     public string RepositoryDisplay => "github.com/turkosx/red-xabbo";
     public string IssuesUrl => "https://github.com/turkosx/red-xabbo/issues/new";

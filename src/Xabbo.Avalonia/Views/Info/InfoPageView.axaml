@@ -106,6 +106,35 @@
       </Border>
 
       <Border Classes="card" Padding="16,14">
+        <StackPanel Spacing="8">
+          <TextBlock Classes="sectionHeader" Text="{Binding [info.credits]}" />
+          <TextBlock Classes="muted" Text="{Binding [info.credits.note]}" />
+          <WrapPanel HorizontalAlignment="Center">
+            <Button
+              Classes="link"
+              Margin="0,0,10,0"
+              Command="{Binding #InfoPageRoot.OpenUrlCmd}"
+              CommandParameter="{Binding CreditAuthorUrl}"
+              Content="{Binding CreditAuthorName}"
+            />
+            <Button
+              Classes="link"
+              Margin="0,0,10,0"
+              Command="{Binding #InfoPageRoot.OpenUrlCmd}"
+              CommandParameter="{Binding CreditContributorUrl}"
+              Content="{Binding CreditContributorName}"
+            />
+            <Button
+              Classes="link"
+              Command="{Binding #InfoPageRoot.OpenUrlCmd}"
+              CommandParameter="{Binding CreditCommunityUrl}"
+              Content="{Binding CreditCommunityName}"
+            />
+          </WrapPanel>
+        </StackPanel>
+      </Border>
+
+      <Border Classes="card" Padding="16,14">
         <StackPanel Spacing="10">
           <TextBlock Classes="sectionHeader" Text="{Binding [info.poweredBy]}" />
           <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto">
