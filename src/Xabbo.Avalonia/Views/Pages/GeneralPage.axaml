@@ -345,20 +345,20 @@
           </StackPanel>
 
           <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto,Auto,Auto">
-            <CheckBox Grid.Row="0" Grid.Column="0" Content="{Binding [general.tools.mimic.figure]}" IsChecked="{Binding Mimic.Figure}" />
-            <CheckBox Grid.Row="0" Grid.Column="1" Content="{Binding [general.tools.mimic.sign]}" IsChecked="{Binding Mimic.Sign}" />
+            <CheckBox Grid.Row="0" Grid.Column="0" Content="{Binding [general.tools.mimic.action]}" IsChecked="{Binding Mimic.Action}" />
+            <CheckBox Grid.Row="0" Grid.Column="1" Content="{Binding [general.tools.mimic.dance]}" IsChecked="{Binding Mimic.Dance}" />
             <CheckBox Grid.Row="0" Grid.Column="2" Content="{Binding [general.tools.mimic.typing]}" IsChecked="{Binding Mimic.Typing}" />
 
-            <CheckBox Grid.Row="1" Grid.Column="0" Content="{Binding [general.tools.mimic.motto]}" IsChecked="{Binding Mimic.Motto}" />
-            <CheckBox Grid.Row="1" Grid.Column="1" Content="{Binding [general.tools.mimic.effect]}" IsChecked="{Binding Mimic.Effect}" />
+            <CheckBox Grid.Row="1" Grid.Column="0" Content="{Binding [general.tools.mimic.effect]}" IsChecked="{Binding Mimic.Effect}" />
+            <CheckBox Grid.Row="1" Grid.Column="1" Content="{Binding [general.tools.mimic.figure]}" IsChecked="{Binding Mimic.Figure}" />
             <CheckBox Grid.Row="1" Grid.Column="2" Content="{Binding [general.tools.mimic.talk]}" IsChecked="{Binding Mimic.Talk}" />
 
-            <CheckBox Grid.Row="2" Grid.Column="0" Content="{Binding [general.tools.mimic.action]}" IsChecked="{Binding Mimic.Action}" />
-            <CheckBox Grid.Row="2" Grid.Column="1" Content="{Binding [general.tools.mimic.sit]}" IsChecked="{Binding Mimic.Sit}" />
+            <CheckBox Grid.Row="2" Grid.Column="0" Content="{Binding [general.tools.mimic.follow]}" IsChecked="{Binding Mimic.Follow}" />
+            <CheckBox Grid.Row="2" Grid.Column="1" Content="{Binding [general.tools.mimic.motto]}" IsChecked="{Binding Mimic.Motto}" />
             <CheckBox Grid.Row="2" Grid.Column="2" Content="{Binding [general.tools.mimic.shout]}" IsChecked="{Binding Mimic.Shout}" />
 
-            <CheckBox Grid.Row="3" Grid.Column="0" Content="{Binding [general.tools.mimic.dance]}" IsChecked="{Binding Mimic.Dance}" />
-            <CheckBox Grid.Row="3" Grid.Column="1" Content="{Binding [general.tools.mimic.follow]}" IsChecked="{Binding Mimic.Follow}" />
+            <CheckBox Grid.Row="3" Grid.Column="0" Content="{Binding [general.tools.mimic.sign]}" IsChecked="{Binding Mimic.Sign}" />
+            <CheckBox Grid.Row="3" Grid.Column="1" Content="{Binding [general.tools.mimic.sit]}" IsChecked="{Binding Mimic.Sit}" />
             <CheckBox Grid.Row="3" Grid.Column="2" Content="{Binding [general.tools.mimic.whisper]}" IsChecked="{Binding Mimic.Whisper}" />
           </Grid>
 
@@ -377,6 +377,61 @@
             Content="{Binding [general.tools.mimic.stop]}"
             Command="{Binding Mimic.StopCmd}"
           />
+        </StackPanel>
+      </Expander>
+
+      <!-- Search -->
+      <Expander Classes="modern" IsExpanded="{Binding IsSearchExpanded}">
+        <Expander.Header>
+          <StackPanel Orientation="Horizontal" Spacing="5">
+            <ic:SymbolIcon Symbol="Search" />
+            <TextBlock Text="{Binding [general.search]}" />
+          </StackPanel>
+        </Expander.Header>
+        <!-- Content -->
+        <StackPanel Spacing="8">
+          <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+            <TextBlock
+              Grid.Column="0"
+              Margin="0,0,8,0"
+              VerticalAlignment="Center"
+              Text="{Binding [general.search.username]}"
+            />
+            <TextBox
+              Grid.Column="1"
+              Margin="0,0,8,0"
+              Text="{Binding SearchUsers.TargetUser, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            />
+            <Button
+              Grid.Column="2"
+              Margin="0,0,8,0"
+              Content="{Binding [general.search.start]}"
+              Command="{Binding SearchUsers.StartCmd}"
+              IsEnabled="{Binding !SearchUsers.IsSearching}"
+            />
+            <Button
+              Grid.Column="3"
+              Content="{Binding [general.search.stop]}"
+              Command="{Binding SearchUsers.StopCmd}"
+              IsEnabled="{Binding SearchUsers.IsSearching}"
+            />
+          </Grid>
+
+          <StackPanel Spacing="3">
+            <TextBlock FontWeight="SemiBold" Text="{Binding [general.search.status]}" />
+            <TextBlock Classes="modern" TextWrapping="Wrap" Text="{Binding SearchUsers.Status}" />
+          </StackPanel>
+
+          <Grid
+            IsVisible="{Binding SearchUsers.HasResult}"
+            ColumnDefinitions="Auto,*"
+            RowDefinitions="Auto,Auto"
+          >
+            <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,0,8,4" Text="{Binding [general.search.foundUser]}" />
+            <TextBlock Grid.Row="0" Grid.Column="1" FontWeight="SemiBold" Text="{Binding SearchUsers.FoundUser}" />
+            <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,0,8,0" Text="{Binding [general.search.foundRoom]}" />
+            <TextBlock Grid.Row="1" Grid.Column="1" FontWeight="SemiBold" TextWrapping="Wrap" Text="{Binding SearchUsers.FoundRoom}" />
+          </Grid>
         </StackPanel>
       </Expander>
 

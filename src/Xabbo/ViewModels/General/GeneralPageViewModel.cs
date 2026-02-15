@@ -51,6 +51,7 @@ public class GeneralPageViewModel : PageViewModel
     [Reactive] public bool IsFurniExpanded { get; set; } = true;
     [Reactive] public bool IsHandItemExpanded { get; set; } = true;
     [Reactive] public bool IsToolsExpanded { get; set; } = true;
+    [Reactive] public bool IsSearchExpanded { get; set; } = true;
     [Reactive] public bool IsAlertsExpanded { get; set; } = true;
     [Reactive] public bool IsFlashWindowExpanded { get; set; } = true;
     [Reactive] public bool IsMiscExpanded { get; set; } = true;
@@ -74,4 +75,5 @@ public class GeneralPageViewModel : PageViewModel
     [DependencyInjectionProperty] public AntiHcGiftNotificationComponent? AntiHcNotification { get; set; }
     [DependencyInjectionProperty] public LightingComponent? Lighting { get; set; }
     [DependencyInjectionProperty] public MimicComponent? Mimic { get; set; }
+    [DependencyInjectionProperty] public SearchUsersComponent? SearchUsers { get; set; }
 }
