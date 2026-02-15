@@ -65,6 +65,13 @@ public partial class MimicComponent : Component
         private set => Set(ref _hasTarget, value);
     }
 
+    private string? _targetFigure;
+    public string? TargetFigure
+    {
+        get => _targetFigure;
+        private set => Set(ref _targetFigure, value);
+    }
+
     public bool IsIdle => _state is MimicState.Idle;
     public bool IsSelecting => _state is MimicState.Selecting;
     public bool IsActive => _state is MimicState.Active;
@@ -137,6 +144,7 @@ public partial class MimicComponent : Component
             return;
 
         TargetName = null;
+        TargetFigure = null;
         _targetId = -1;
 
         _lastSign = AvatarSign.None;
@@ -154,6 +162,7 @@ public partial class MimicComponent : Component
     {
         _targetId = -1;
         TargetName = null;
+        TargetFigure = null;
 
         _lastSign = AvatarSign.None;
         _lastSitting = null;
@@ -180,6 +189,7 @@ public partial class MimicComponent : Component
     {
         _targetId = target.Id;
         TargetName = target.Name;
+        TargetFigure = target.Figure;
 
         _lastSign = AvatarSign.None;
         _lastSitting = null;
@@ -231,6 +241,7 @@ public partial class MimicComponent : Component
         if (e.Avatar is IUser user && IsTarget(user))
         {
             TargetName = user.Name;
+            TargetFigure = user.Figure;
             ApplyProfile(user);
         }
     }
@@ -246,8 +257,12 @@ public partial class MimicComponent : Component
         if (!IsTarget(e.Avatar) || e.Avatar is not IUser user)
             return;
 
-        if (Figure && (e.FigureUpdated || e.GenderUpdated))
-            Ext.Send(new UpdateAvatarMsg(user.Gender, user.Figure));
+        if (e.FigureUpdated || e.GenderUpdated)
+        {
+            TargetFigure = user.Figure;
+            if (Figure)
+                Ext.Send(new UpdateAvatarMsg(user.Gender, user.Figure));
+        }
 
         if (Motto && e.MottoUpdated)
             Ext.Send(new UpdateMottoMsg(user.Motto));

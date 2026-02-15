@@ -320,6 +320,7 @@
               <controls:AvatarImage
                 HeadOnly="True"
                 Direction="2"
+                FigureString="{Binding Mimic.TargetFigure}"
                 UserName="{Binding Mimic.TargetName}"
               />
             </Border>
