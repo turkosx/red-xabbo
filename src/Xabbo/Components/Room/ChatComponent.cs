@@ -119,13 +119,15 @@ public partial class ChatComponent : Component
     [InterceptIn(nameof(In.RespectNotification))]
     private void OnUserRespect(Intercept e)
     {
-        if (Settings.Chat.MuteRespects) e.Block();
+        if (Settings.Chat.MuteAll || Settings.Chat.MuteRespects)
+            e.Block();
     }
 
     [Intercept(ClientType.Modern)]
     [InterceptIn(nameof(In.PetRespectNotification))]
     private void OnRoomPetRespect(Intercept e)
     {
-        if (Settings.Chat.MuteScratches) e.Block();
+        if (Settings.Chat.MuteAll || Settings.Chat.MuteScratches)
+            e.Block();
     }
 }

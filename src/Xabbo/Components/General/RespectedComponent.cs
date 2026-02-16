@@ -1,8 +1,10 @@
-﻿using Xabbo.Messages.Flash;
+using Xabbo.Messages.Flash;
 using Xabbo.Extension;
 using Xabbo.Core;
 using Xabbo.Core.Game;
 using Xabbo.Core.Messages.Incoming;
+using Xabbo.Configuration;
+using Xabbo.Services.Abstractions;
 
 namespace Xabbo.Components;
 
@@ -10,6 +12,8 @@ namespace Xabbo.Components;
 public partial class RespectedComponent : Component
 {
     private readonly RoomManager _roomManager;
+    private readonly IConfigProvider<AppConfig> _configProvider;
+    private AppConfig Settings => _configProvider.Value;
 
     private DateTime _lastRespect = DateTime.MinValue;
     private int _lastRespecterIndex = -1;
@@ -28,11 +32,14 @@ public partial class RespectedComponent : Component
         set => Set(ref _showTotalRespects, value);
     }
 
-    public RespectedComponent(IExtension extension,
-        RoomManager roomManager)
+    public RespectedComponent(
+        IExtension extension,
+        RoomManager roomManager,
+        IConfigProvider<AppConfig> configProvider)
         : base(extension)
     {
         _roomManager = roomManager;
+        _configProvider = configProvider;
         roomManager.Left += Room_Left;
     }
 
@@ -61,6 +68,12 @@ public partial class RespectedComponent : Component
     [InterceptIn(nameof(In.RespectNotification))]
     private void HandleRespectNotification(Intercept e)
     {
+        if (e.IsBlocked || Settings.Chat.MuteAll || Settings.Chat.MuteRespects)
+        {
+            e.Block();
+            return;
+        }
+
         IRoom? room = _roomManager.Room;
         if (room is null || (!ShowWhoRespected && !ShowTotalRespects))
             return;
