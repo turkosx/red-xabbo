@@ -37,7 +37,9 @@ public class LightingComponent : Component
         _gameData.Loaded += OnGameDataLoaded;
         _roomManager.Entered += OnEnteredRoom;
         _roomManager.Left += OnLeftRoom;
+        _roomManager.FloorItemsLoaded += OnFloorItemsLoaded;
         _roomManager.FloorItemAdded += OnFloorItemAdded;
+        _roomManager.FloorItemRemoved += OnFloorItemRemoved;
         _roomManager.FloorItemDataUpdated += OnFloorItemDataUpdated;
 
         this.WhenAnyValue(x => x.IsTonerActive)
@@ -72,15 +74,19 @@ public class LightingComponent : Component
     private void SetToner(IFloorItem toner)
     {
         _currentBgTonerId = toner.Id;
-        if (toner.Data is IIntArrayData data && data.Count == 4)
+        IsTonerAvailable = true;
+
+        if (toner.Data is IIntArrayData data && data.Count >= 4)
         {
             _lastTonerActiveUpdate = data[0] != 0;
             IsTonerActive = _lastTonerActiveUpdate.Value;
 
-            _lastTonerColorUpdate = new HslU8((byte)data[1], (byte)data[2], (byte)data[3]);
+            _lastTonerColorUpdate = new HslU8(
+                (byte)Math.Clamp(data[1], byte.MinValue, byte.MaxValue),
+                (byte)Math.Clamp(data[2], byte.MinValue, byte.MaxValue),
+                (byte)Math.Clamp(data[3], byte.MinValue, byte.MaxValue)
+            );
             TonerColor = _lastTonerColorUpdate.Value;
-
-            IsTonerAvailable = true;
         }
     }
 
@@ -89,7 +95,12 @@ public class LightingComponent : Component
         if (_lastTonerColorUpdate.Equals(color)) return;
         if (!Ext.IsConnected || _currentBgTonerId <= 0) return;
         _lastTonerColorUpdate = color;
-        Ext.Send(Out.SetRoomBackgroundColorData, _currentBgTonerId, color);
+        Ext.Send(Out.SetRoomBackgroundColorData,
+            _currentBgTonerId,
+            (int)color.H,
+            (int)color.S,
+            (int)color.L
+        );
     }
 
     private void EnableToner(bool enable)
@@ -105,8 +116,28 @@ public class LightingComponent : Component
         FindToner();
     }
 
+    private void OnFloorItemsLoaded(FloorItemsEventArgs e)
+    {
+        if (_currentBgTonerId <= 0)
+            FindToner();
+    }
+
     private void OnLeftRoom()
     {
+        _currentBgTonerId = -1;
+        _lastTonerActiveUpdate = null;
+        _lastTonerColorUpdate = null;
+
+        IsTonerAvailable = false;
+        IsTonerActive = false;
+        TonerColor = default;
+    }
+
+    private void OnFloorItemRemoved(FloorItemEventArgs e)
+    {
+        if (e.Item.Id != _currentBgTonerId)
+            return;
+
         _currentBgTonerId = -1;
         _lastTonerActiveUpdate = null;
         _lastTonerColorUpdate = null;
@@ -121,15 +152,19 @@ public class LightingComponent : Component
         if (!Extensions.IsInitialized) return;
 
         if (e.Item.TryGetIdentifier(out string? identifier) &&
-            identifier == TonerIdentifier)
+            identifier.Equals(TonerIdentifier, StringComparison.OrdinalIgnoreCase))
         {
-            _currentBgTonerId = e.Item.Id;
+            SetToner(e.Item);
         }
     }
 
     private void OnFloorItemDataUpdated(FloorItemDataUpdatedEventArgs e)
     {
-        if (e.Item.Id == _currentBgTonerId)
+        if (e.Item.Id == _currentBgTonerId ||
+            (e.Item.TryGetIdentifier(out string? identifier) &&
+            identifier.Equals(TonerIdentifier, StringComparison.OrdinalIgnoreCase)))
+        {
             SetToner(e.Item);
+        }
     }
 }

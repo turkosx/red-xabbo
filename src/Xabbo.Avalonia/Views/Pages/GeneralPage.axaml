@@ -473,7 +473,7 @@
           <StackPanel Orientation="Horizontal" Spacing="10">
             <ColorPicker
               IsEnabled="{Binding Lighting.IsTonerAvailable}"
-              Color="{Binding Lighting.TonerColor, Converter={StaticResource HslU8Converter}}"
+              Color="{Binding Lighting.TonerColor, Mode=TwoWay, Converter={StaticResource HslU8Converter}}"
             />
             <CheckBox
               IsEnabled="{Binding Lighting.IsTonerAvailable}"
