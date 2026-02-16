@@ -9,7 +9,6 @@ using DynamicData.Binding;
 using DynamicData.Kernel;
 using HanumanInstitute.MvvmDialogs;
 using ReactiveUI;
-using Humanizer;
 
 using Xabbo.Extension;
 using Xabbo.Core;
@@ -33,6 +32,7 @@ public sealed partial class InventoryViewModel : ControllerBase
 
     private readonly ILogger _logger;
     private readonly IConfigProvider<AppConfig> _config;
+    private readonly ILocalizationService _localizer;
     private readonly IDialogService _dialogService;
     private readonly IHabboApi _api;
     private readonly IOperationManager _operations;
@@ -88,6 +88,7 @@ public sealed partial class InventoryViewModel : ControllerBase
         IExtension extension,
         ILoggerFactory loggerFactory,
         IConfigProvider<AppConfig> config,
+        ILocalizationService localizationService,
         IDialogService dialogService,
         IHabboApi api,
         IOperationManager operations,
@@ -101,6 +102,7 @@ public sealed partial class InventoryViewModel : ControllerBase
     {
         _logger = loggerFactory.CreateLogger<InventoryViewModel>();
         _config = config;
+        _localizer = localizationService;
         _dialogService = dialogService;
         _api = api;
         _operations = operations;
@@ -111,6 +113,14 @@ public sealed partial class InventoryViewModel : ControllerBase
         _tradeManager = tradeManager;
         _tradeManager.Updated += OnTradeUpdated;
         _tradeManager.Closed += OnTradeClosed;
+
+        var languageChanged = Observable
+            .FromEvent(
+                h => _localizer.LanguageChanged += h,
+                h => _localizer.LanguageChanged -= h
+            )
+            .Select(_ => Unit.Default)
+            .StartWith(Unit.Default);
 
         var comparer = SortExpressionComparer<InventoryStackViewModel>.Ascending(x => x.Name);
 
@@ -139,13 +149,14 @@ public sealed partial class InventoryViewModel : ControllerBase
                 this.WhenAnyValue(x => x.HasLoaded),
                 _cache.CountChanged,
                 _roomManager.WhenAnyValue(x => x.IsInRoom),
-                (hasLoaded, count, isInRoom) => {
+                languageChanged,
+                (hasLoaded, count, isInRoom, _) => {
                     if (count > 0)
                         return null;
                     if (hasLoaded)
-                        return "No items";
+                        return this["inventory.empty.noItems"];
                     if (!isInRoom)
-                        return "Enter a room to load inventory";
+                        return this["inventory.empty.enterRoom"];
                     return null;
                 }
             )
@@ -155,8 +166,9 @@ public sealed partial class InventoryViewModel : ControllerBase
             Observable.CombineLatest(
                 this.WhenAnyValue(x => x.HasLoaded),
                 _photoCache.CountChanged,
-                (hasLoaded, count) =>
-                    (hasLoaded && count == 0) ? "No photos in inventory" : ""
+                languageChanged,
+                (hasLoaded, count, _) =>
+                    (hasLoaded && count == 0) ? this["inventory.empty.noPhotos"] : ""
             )
             .ToProperty(this, x => x.EmptyPhotoStatus);
 
@@ -180,21 +192,22 @@ public sealed partial class InventoryViewModel : ControllerBase
                     x => x.Status,
                     (progress, maxProgress, status) => (progress, maxProgress, status)
                 ),
-                (self, manager, placer) => self.status switch
+                languageChanged,
+                (self, manager, placer, _) => self.status switch
                 {
                     State.Loading => manager.max > 0
-                        ? $"Loading...\n{manager.current} / {manager.max}"
-                        : $"Loading...\n{manager.current} / ?",
-                    State.Offering => $"Offering items...\n{self.progress} / {self.maxProgress}",
+                        ? $"{this["inventory.status.loading"]}\n{manager.current} / {manager.max}"
+                        : $"{this["inventory.status.loading"]}\n{manager.current} / ?",
+                    State.Offering => $"{this["inventory.status.offeringItems"]}\n{self.progress} / {self.maxProgress}",
                     State.AwaitingCornerSelection =>
-                        $"Click the 2 corner tiles of the area where you want to place the items"
+                        this["inventory.status.awaitingCornerSelection"]
                         + $"\n{self.progress} / {self.maxProgress}",
                     State.ManualPlacing => $"{(
                         placer.status is FurniPlacementController.State.PlacingFloorItems
-                        ? "Placing floor items"
-                        : "Placing wall items"
-                    )}\nClick tiles to place items...\n{placer.progress} / {placer.maxProgress}",
-                    State.AutoPlacing => $"Placing items...\n{placer.progress} / {placer.maxProgress}",
+                        ? this["inventory.status.placingFloorItems"]
+                        : this["inventory.status.placingWallItems"]
+                    )}\n{this["inventory.status.clickTilesToPlace"]}\n{placer.progress} / {placer.maxProgress}",
+                    State.AutoPlacing => $"{this["inventory.status.placingItems"]}\n{placer.progress} / {placer.maxProgress}",
                     _ => ""
                 }
             )
@@ -204,7 +217,13 @@ public sealed partial class InventoryViewModel : ControllerBase
             Observable.CombineLatest(
                 _cache.CountChanged,
                 this.WhenAnyValue(x => x.ItemCount),
-                (stackCount, itemCount) => $"{stackCount} furni, {"item".ToQuantity(itemCount)}"
+                languageChanged,
+                (stackCount, itemCount, _) => {
+                    string itemLabel = itemCount == 1
+                        ? this["inventory.count.item.singular"]
+                        : this["inventory.count.item.plural"];
+                    return $"{stackCount} {this["inventory.count.furni"]}, {itemCount} {itemLabel}";
+                }
             )
             .ToProperty(this, x => x.ItemCountText);
 
@@ -379,10 +398,10 @@ public sealed partial class InventoryViewModel : ControllerBase
         var result = await _dialogService.ShowContentDialogAsync(_dialogService.CreateViewModel<MainViewModel>(),
             new HanumanInstitute.MvvmDialogs.Avalonia.Fluent.ContentDialogSettings
             {
-                Title = "Offer items",
+                Title = this["inventory.dialog.offerItems.title"],
                 Content = viewModel,
-                PrimaryButtonText = "Cancel",
-                SecondaryButtonText = "Offer",
+                PrimaryButtonText = this["inventory.dialog.button.cancel"],
+                SecondaryButtonText = this["inventory.dialog.button.offer"],
                 FullSizeDesired = true
             }
         );
@@ -410,7 +429,7 @@ public sealed partial class InventoryViewModel : ControllerBase
         MaxProgress = 2;
         Status = State.AwaitingCornerSelection;
 
-        return await _operations.RunAsync("Select area", async (ct) => {
+        return await _operations.RunAsync(this["inventory.operation.selectArea"], async (ct) => {
             Point[] corners = new Point[2];
             for (int i = 0; i < 2; i++)
             {
@@ -437,7 +456,7 @@ public sealed partial class InventoryViewModel : ControllerBase
                 return;
 
             if (!_roomManager.EnsureInRoom(out var room))
-                throw new Exception("Room state is not being tracked.");
+                throw new Exception(this["inventory.error.roomStateNotTracked"]);
 
             var errorHandling = FurniPlacementController.ErrorHandling.Abort;
 
@@ -464,13 +483,13 @@ public sealed partial class InventoryViewModel : ControllerBase
                     Status = State.ManualPlacing;
                     break;
                 default:
-                    throw new Exception($"Unknown placement mode: '{mode}'.");
+                    throw new Exception(string.Format(this["inventory.error.unknownPlacementMode"], mode));
             }
 
             using (floorPlacement)
             using (wallPlacement)
             {
-                await _operations.RunAsync("Place furni",
+                await _operations.RunAsync(this["inventory.operation.placeFurni"],
                     (ct) => _placement.PlaceItemsAsync(
                         items, floorPlacement, wallPlacement, errorHandling, ct),
                     cancellationToken
@@ -482,11 +501,17 @@ public sealed partial class InventoryViewModel : ControllerBase
         {
             Status = State.None;
             if (ex is TimeoutException)
-                await _dialogService.ShowAsync("Timed out", "Try increasing the furni placement interval in settings.");
+                await _dialogService.ShowAsync(
+                    this["inventory.dialog.timedOut.title"],
+                    this["inventory.dialog.placeIntervalHint"]
+                );
             else if (ex is PlacementNotFoundException)
-                await _dialogService.ShowAsync("No placement location", "Could not find a valid placement location.");
+                await _dialogService.ShowAsync(
+                    this["inventory.dialog.noPlacement.title"],
+                    this["inventory.dialog.noPlacement.message"]
+                );
             else
-                await _dialogService.ShowAsync("Error", ex.Message);
+                await _dialogService.ShowAsync(this["inventory.dialog.error.title"], ex.Message);
         }
         finally
         {
@@ -498,7 +523,10 @@ public sealed partial class InventoryViewModel : ControllerBase
     {
         if (!_tradeManager.IsTrading)
         {
-            await _dialogService.ShowAsync("Warning", "You are not currently in a trade.");
+            await _dialogService.ShowAsync(
+                this["inventory.dialog.warning.title"],
+                this["inventory.dialog.notTrading.message"]
+            );
             return;
         }
 
@@ -531,7 +559,7 @@ public sealed partial class InventoryViewModel : ControllerBase
 
         try
         {
-            await _operations.RunAsync("Offer items", async (ct) => {
+            await _operations.RunAsync(this["inventory.operation.offerItems"], async (ct) => {
                 try
                 {
                     Progress = 0;
@@ -553,11 +581,14 @@ public sealed partial class InventoryViewModel : ControllerBase
         }
         catch (TimeoutException)
         {
-            await _dialogService.ShowAsync("Timed out", "Try increasing the offer interval in settings.");
+            await _dialogService.ShowAsync(
+                this["inventory.dialog.timedOut.title"],
+                this["inventory.dialog.offerIntervalHint"]
+            );
         }
         catch (Exception ex)
         {
-            await _dialogService.ShowAsync("Error", ex.Message);
+            await _dialogService.ShowAsync(this["inventory.dialog.error.title"], ex.Message);
         }
     }
 
@@ -636,20 +667,23 @@ public sealed partial class InventoryViewModel : ControllerBase
     {
         if (!_roomManager.IsInRoom)
         {
-            await _dialogService.ShowAsync("Warning", "You must be in a room to load your inventory.");
+            await _dialogService.ShowAsync(
+                this["inventory.dialog.warning.title"],
+                this["inventory.dialog.mustBeInRoom.message"]
+            );
             return;
         }
 
         try
         {
             Status = State.Loading;
-            await _operations.RunAsync("Load inventory",
+            await _operations.RunAsync(this["inventory.operation.loadInventory"],
                 (ct) => _inventoryManager.LoadInventoryAsync(timeout: 120000, forceReload: true, cancellationToken: ct));
         }
         catch (OperationCanceledException) { }
         catch (Exception ex)
         {
-            await _dialogService.ShowAsync("Failed to load inventory", ex.Message);
+            await _dialogService.ShowAsync(this["inventory.dialog.loadFailed.title"], ex.Message);
         }
         finally
         {

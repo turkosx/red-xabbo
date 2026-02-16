@@ -101,7 +101,7 @@
     </Style>
   </wnd:AppWindow.Styles>
   <Grid RowDefinitions="32,*">
-    <Grid Name="TitleBarHost" ColumnDefinitions="48,*,Auto,0" ZIndex="1000" Background="{DynamicResource PremiumChromeGradientBrush}">
+    <Grid Name="TitleBarHost" ColumnDefinitions="48,*,Auto,0" ZIndex="1000" Background="{DynamicResource NavigationViewDefaultPaneBackground}">
       <Image
         Margin="0,8,0,-8"
         Source="avares://Xabbo.Avalonia/Assets/xabbo-skull-64.png"

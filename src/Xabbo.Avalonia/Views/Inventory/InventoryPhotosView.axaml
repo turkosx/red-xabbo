@@ -28,7 +28,7 @@
         <ui:FAMenuFlyout>
           <ui:MenuFlyoutItem
             IconSource="{icm:SymbolIconSource Symbol=HandLeft, IconVariant=Filled}"
-            Text="Offer" Command="{Binding OfferPhotosCmd}"
+            Text="{Binding [inventory.menu.offer]}" Command="{Binding OfferPhotosCmd}"
           />
         </ui:FAMenuFlyout>
       </ListBox.ContextFlyout>

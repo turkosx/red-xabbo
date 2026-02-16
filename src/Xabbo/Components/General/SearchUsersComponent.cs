@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reactive;
@@ -16,6 +17,12 @@ namespace Xabbo.Components;
 public partial class SearchUsersComponent : Component
 {
     private static readonly string[] _categories = ["popular", "top_promotions", "new_ads"];
+    private const int NavigatorFirstBlockTimeoutMs = 1200;
+    private const int NavigatorCategoryMaxWaitMs = 2500;
+    private const int NavigatorQuietWindowMs = 350;
+    private const int EnterRoomTimeoutMs = 9000;
+    private const int UsersPacketTimeoutMs = 4000;
+    private const int RoomSwitchDelayMs = 150;
 
     private readonly ILocalizationService _localizer;
     private readonly RoomManager _roomManager;
@@ -25,9 +32,11 @@ public partial class SearchUsersComponent : Component
 
     private CancellationTokenSource? _searchCancellation;
     private TaskCompletionSource<bool>? _roomScanSignal;
+    private TaskCompletionSource<bool>? _navigatorScanSignal;
     private bool _capturePackets;
     private bool _captureNavigator;
     private bool _awaitingUsers;
+    private int _navigatorRevision;
 
     private Id _currentRoomId = -1;
     private string _currentRoomName = "";
@@ -103,6 +112,7 @@ public partial class SearchUsersComponent : Component
         _currentRoomId = -1;
         _currentRoomName = "";
         _foundRoomId = -1;
+        _navigatorRevision = 0;
         RoomsQueued = 0;
         RoomsScanned = 0;
         _awaitingUsers = false;
@@ -130,6 +140,7 @@ public partial class SearchUsersComponent : Component
         _captureNavigator = false;
         _awaitingUsers = false;
         _roomScanSignal?.TrySetResult(true);
+        _navigatorScanSignal?.TrySetResult(true);
 
         if (IsSearching)
             SetStatus("general.search.status.stopped");
@@ -150,11 +161,20 @@ public partial class SearchUsersComponent : Component
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                Ext.Send(Out.NewNavigatorSearch, category, "");
-                await Task.Delay(2500, cancellationToken);
+                try
+                {
+                    await CollectCategoryRoomsAsync(category, cancellationToken);
+                }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
+                catch
+                {
+                    // Skip individual navigator category failures and continue collecting.
+                }
             }
 
-            await Task.Delay(500, cancellationToken);
             _captureNavigator = false;
 
             RoomInfo[] roomsToScan;
@@ -162,6 +182,8 @@ public partial class SearchUsersComponent : Component
             {
                 roomsToScan = _rooms
                     .Where(room => room.IsOpen && room.Users >= 1)
+                    .OrderByDescending(room => room.Users)
+                    .ThenBy(room => room.Name, StringComparer.OrdinalIgnoreCase)
                     .ToArray();
             }
 
@@ -188,35 +210,54 @@ public partial class SearchUsersComponent : Component
                 _roomScanSignal = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
                 _awaitingUsers = false;
 
-                EnterRoomTask.Result enterResult = await new EnterRoomTask(Ext, room.Id)
-                    .ExecuteAsync(10000, cancellationToken);
-                if (enterResult is not EnterRoomTask.Result.Success)
+                try
                 {
-                    await Task.Delay(500, cancellationToken);
-                    continue;
-                }
+                    EnterRoomTask.Result enterResult = await new EnterRoomTask(Ext, room.Id)
+                        .ExecuteAsync(EnterRoomTimeoutMs, cancellationToken);
+                    if (enterResult is not EnterRoomTask.Result.Success)
+                    {
+                        await Task.Delay(RoomSwitchDelayMs, cancellationToken);
+                        continue;
+                    }
 
-                if (TryFindUserInCurrentRoom())
+                    if (TryFindUserInCurrentRoom())
+                    {
+                        roomToEnter = _foundRoomId;
+                        break;
+                    }
+
+                    // If avatars are already loaded for this room, we can move on immediately.
+                    if (HasLoadedUsersForCurrentRoom())
+                    {
+                        await Task.Delay(RoomSwitchDelayMs, cancellationToken);
+                        continue;
+                    }
+
+                    _awaitingUsers = true;
+                    Task completed = await Task.WhenAny(
+                        _roomScanSignal.Task,
+                        Task.Delay(UsersPacketTimeoutMs, cancellationToken)
+                    );
+                    _awaitingUsers = false;
+
+                    if (completed == _roomScanSignal.Task && _foundRoomId > 0)
+                    {
+                        roomToEnter = _foundRoomId;
+                        break;
+                    }
+
+                    await Task.Delay(RoomSwitchDelayMs, cancellationToken);
+                }
+                catch (OperationCanceledException)
                 {
-                    roomToEnter = _foundRoomId;
-                    break;
+                    throw;
                 }
-
-                _awaitingUsers = true;
-
-                Task completed = await Task.WhenAny(
-                    _roomScanSignal.Task,
-                    Task.Delay(6000, cancellationToken)
-                );
-                _awaitingUsers = false;
-
-                if (completed == _roomScanSignal.Task && _foundRoomId > 0)
+                catch
                 {
-                    roomToEnter = _foundRoomId;
-                    break;
+                    _awaitingUsers = false;
+                    _roomScanSignal?.TrySetResult(true);
+                    await Task.Delay(RoomSwitchDelayMs, cancellationToken);
                 }
-
-                await Task.Delay(500, cancellationToken);
             }
 
             if (_foundRoomId > 0)
@@ -244,6 +285,8 @@ public partial class SearchUsersComponent : Component
             IsSearching = false;
             _roomScanSignal?.TrySetResult(true);
             _roomScanSignal = null;
+            _navigatorScanSignal?.TrySetResult(true);
+            _navigatorScanSignal = null;
         }
 
         if (roomToEnter > 0 && !cancellationToken.IsCancellationRequested)
@@ -257,6 +300,42 @@ public partial class SearchUsersComponent : Component
             {
                 // Ignore re-entry failures; search result is already available.
             }
+        }
+    }
+
+    private async Task CollectCategoryRoomsAsync(string category, CancellationToken cancellationToken)
+    {
+        _navigatorScanSignal = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        int previousRevision = Volatile.Read(ref _navigatorRevision);
+
+        Ext.Send(Out.NewNavigatorSearch, category, "");
+
+        await Task.WhenAny(
+            _navigatorScanSignal.Task,
+            Task.Delay(NavigatorFirstBlockTimeoutMs, cancellationToken)
+        );
+
+        var wait = Stopwatch.StartNew();
+        int lastRevision = Volatile.Read(ref _navigatorRevision);
+
+        // Wait until navigator results stop changing to avoid missing late blocks.
+        while (wait.ElapsedMilliseconds < NavigatorCategoryMaxWaitMs)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            await Task.Delay(NavigatorQuietWindowMs, cancellationToken);
+
+            int currentRevision = Volatile.Read(ref _navigatorRevision);
+            if (currentRevision == lastRevision)
+            {
+                // If no packets were received at all, keep one extra quiet window before moving on.
+                if (currentRevision == previousRevision &&
+                    wait.ElapsedMilliseconds < NavigatorQuietWindowMs * 2)
+                {
+                    continue;
+                }
+                break;
+            }
+            lastRevision = currentRevision;
         }
     }
 
@@ -308,6 +387,8 @@ public partial class SearchUsersComponent : Component
                 }
             }
 
+            Interlocked.Increment(ref _navigatorRevision);
+            _navigatorScanSignal?.TrySetResult(true);
             e.Block();
         }
         catch
@@ -388,6 +469,14 @@ public partial class SearchUsersComponent : Component
         string roomName = room.Data?.Name ?? _currentRoomName;
         SetFound(user.Name, _currentRoomId, roomName);
         return true;
+    }
+
+    private bool HasLoadedUsersForCurrentRoom()
+    {
+        if (!_roomManager.EnsureInRoom(out IRoom? room))
+            return false;
+
+        return room.Id == _currentRoomId && room.Avatars.Any();
     }
 
     private void SetFound(string userName, Id roomId, string roomName)
