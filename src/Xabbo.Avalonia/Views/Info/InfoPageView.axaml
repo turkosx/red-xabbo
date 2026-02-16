@@ -28,6 +28,42 @@
           <Setter Property="FontFamily" Value="{DynamicResource Mono}" />
           <Setter Property="FontSize" Value="18" />
         </Style>
+        <Style Selector="Border.creditListCard">
+          <Setter Property="Background" Value="{DynamicResource PremiumChromeGradientBrush}" />
+          <Setter Property="BorderBrush" Value="#6BE96A70" />
+          <Setter Property="BorderThickness" Value="1" />
+          <Setter Property="CornerRadius" Value="12" />
+          <Setter Property="Padding" Value="10,8" />
+          <Setter Property="MaxWidth" Value="760" />
+          <Setter Property="HorizontalAlignment" Value="Center" />
+        </Style>
+        <Style Selector="Border.creditListCard:pointerover">
+          <Setter Property="BorderBrush" Value="{DynamicResource AccentFillColorDefaultBrush}" />
+        </Style>
+        <Style Selector="Grid.creditRow">
+          <Setter Property="Margin" Value="0,4" />
+        </Style>
+        <Style Selector="TextBlock.creditPill">
+          <Setter Property="FontFamily" Value="{DynamicResource Mono}" />
+          <Setter Property="FontSize" Value="11" />
+          <Setter Property="TextAlignment" Value="Left" />
+          <Setter Property="Opacity" Value="0.85" />
+        </Style>
+        <Style Selector="TextBlock.creditTitle">
+          <Setter Property="FontSize" Value="15" />
+          <Setter Property="FontWeight" Value="SemiBold" />
+          <Setter Property="TextAlignment" Value="Left" />
+        </Style>
+        <Style Selector="TextBlock.creditDescription">
+          <Setter Property="FontSize" Value="12" />
+          <Setter Property="TextAlignment" Value="Left" />
+        </Style>
+        <Style Selector="Button.creditLink">
+          <Setter Property="HorizontalAlignment" Value="Right" />
+          <Setter Property="VerticalAlignment" Value="Center" />
+          <Setter Property="Padding" Value="0" />
+          <Setter Property="FontSize" Value="12" />
+        </Style>
       </StackPanel.Styles>
 
       <Border Classes="card" Padding="24,20">
@@ -106,31 +142,100 @@
       </Border>
 
       <Border Classes="card" Padding="16,14">
-        <StackPanel Spacing="8">
+        <StackPanel Spacing="10">
           <TextBlock Classes="sectionHeader" Text="{Binding [info.credits]}" />
           <TextBlock Classes="muted" Text="{Binding [info.credits.note]}" />
-          <WrapPanel HorizontalAlignment="Center">
-            <Button
-              Classes="link"
-              Margin="0,0,10,0"
-              Command="{Binding #InfoPageRoot.OpenUrlCmd}"
-              CommandParameter="{Binding CreditAuthorUrl}"
-              Content="{Binding CreditAuthorName}"
-            />
-            <Button
-              Classes="link"
-              Margin="0,0,10,0"
-              Command="{Binding #InfoPageRoot.OpenUrlCmd}"
-              CommandParameter="{Binding CreditContributorUrl}"
-              Content="{Binding CreditContributorName}"
-            />
-            <Button
-              Classes="link"
-              Command="{Binding #InfoPageRoot.OpenUrlCmd}"
-              CommandParameter="{Binding CreditCommunityUrl}"
-              Content="{Binding CreditCommunityName}"
-            />
-          </WrapPanel>
+          <Border Classes="creditListCard">
+            <StackPanel>
+              <Grid Classes="creditRow" ColumnDefinitions="*,Auto">
+                <StackPanel Grid.Column="0" Spacing="2" Margin="0,0,10,0">
+                  <TextBlock Classes="creditPill" Text="{Binding [info.credits.api.pill]}" />
+                  <TextBlock Classes="creditTitle" Text="{Binding [info.credits.api.title]}" />
+                  <TextBlock Classes="creditDescription muted" Text="{Binding [info.credits.api.description]}" />
+                </StackPanel>
+                <Button
+                  Grid.Column="1"
+                  Classes="link creditLink"
+                  Command="{Binding #InfoPageRoot.OpenUrlCmd}"
+                  CommandParameter="{Binding CreditApiUrl}"
+                >
+                  <TextBlock Text="{Binding CreditApiDisplay}" />
+                </Button>
+              </Grid>
+
+              <Separator Margin="0,2" />
+
+              <Grid Classes="creditRow" ColumnDefinitions="*,Auto">
+                <StackPanel Grid.Column="0" Spacing="2" Margin="0,0,10,0">
+                  <TextBlock Classes="creditPill" Text="{Binding [info.credits.b7c.pill]}" />
+                  <TextBlock Classes="creditTitle" Text="{Binding [info.credits.b7c.title]}" />
+                  <TextBlock Classes="creditDescription muted" Text="{Binding [info.credits.b7c.description]}" />
+                </StackPanel>
+                <Button
+                  Grid.Column="1"
+                  Classes="link creditLink"
+                  Command="{Binding #InfoPageRoot.OpenUrlCmd}"
+                  CommandParameter="{Binding CreditB7cUrl}"
+                >
+                  <TextBlock Text="{Binding CreditB7cDisplay}" />
+                </Button>
+              </Grid>
+
+              <Separator Margin="0,2" />
+
+              <Grid Classes="creditRow" ColumnDefinitions="*,Auto">
+                <StackPanel Grid.Column="0" Spacing="2" Margin="0,0,10,0">
+                  <TextBlock Classes="creditPill" Text="{Binding [info.credits.qdaves.pill]}" />
+                  <TextBlock Classes="creditTitle" Text="{Binding [info.credits.qdaves.title]}" />
+                  <TextBlock Classes="creditDescription muted" Text="{Binding [info.credits.qdaves.description]}" />
+                </StackPanel>
+                <Button
+                  Grid.Column="1"
+                  Classes="link creditLink"
+                  Command="{Binding #InfoPageRoot.OpenUrlCmd}"
+                  CommandParameter="{Binding CreditQDavesUrl}"
+                >
+                  <TextBlock Text="{Binding CreditQDavesDisplay}" />
+                </Button>
+              </Grid>
+
+              <Separator Margin="0,2" />
+
+              <Grid Classes="creditRow" ColumnDefinitions="*,Auto">
+                <StackPanel Grid.Column="0" Spacing="2" Margin="0,0,10,0">
+                  <TextBlock Classes="creditPill" Text="{Binding [info.credits.forks.pill]}" />
+                  <TextBlock Classes="creditTitle" Text="{Binding [info.credits.forks.title]}" />
+                  <TextBlock Classes="creditDescription muted" Text="{Binding [info.credits.forks.description]}" />
+                </StackPanel>
+                <Button
+                  Grid.Column="1"
+                  Classes="link creditLink"
+                  Command="{Binding #InfoPageRoot.OpenUrlCmd}"
+                  CommandParameter="{Binding CreditForksUrl}"
+                >
+                  <TextBlock Text="{Binding CreditForksDisplay}" />
+                </Button>
+              </Grid>
+
+              <Separator Margin="0,2" />
+
+              <Grid Classes="creditRow" ColumnDefinitions="*,Auto">
+                <StackPanel Grid.Column="0" Spacing="2" Margin="0,0,10,0">
+                  <TextBlock Classes="creditPill" Text="{Binding [info.credits.discord.pill]}" />
+                  <TextBlock Classes="creditTitle" Text="{Binding [info.credits.discord.title]}" />
+                  <TextBlock Classes="creditDescription muted" Text="{Binding [info.credits.discord.description]}" />
+                </StackPanel>
+                <Button
+                  Grid.Column="1"
+                  Classes="link creditLink"
+                  Command="{Binding #InfoPageRoot.OpenUrlCmd}"
+                  CommandParameter="{Binding CreditCommunityUrl}"
+                >
+                  <TextBlock Text="{Binding CreditCommunityDisplay}" />
+                </Button>
+              </Grid>
+            </StackPanel>
+          </Border>
         </StackPanel>
       </Border>
 

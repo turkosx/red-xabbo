@@ -149,10 +149,42 @@ Use essa opcao apenas em computador confiavel.
 
 ---
 
+## Creditos e referencias
+Essa build se apoia no ecossistema xabbo e em contribuicoes da comunidade.
+
+<p align="center">
+  <a href="https://xabbo.io">
+    <img src="https://img.shields.io/badge/Xabbo-APIs-ff3b30?style=flat-square&labelColor=0b0f14" alt="Xabbo APIs" />
+  </a>
+  <a href="https://github.com/b7c">
+    <img src="https://img.shields.io/badge/GitHub-b7c-ff3b30?style=flat-square&logo=github&logoColor=ffffff&labelColor=0b0f14" alt="GitHub b7c" />
+  </a>
+  <a href="https://github.com/QDaves">
+    <img src="https://img.shields.io/badge/GitHub-QDaves-ff3b30?style=flat-square&logo=github&logoColor=ffffff&labelColor=0b0f14" alt="GitHub QDaves" />
+  </a>
+  <a href="https://github.com/xabbo/xabbo/forks">
+    <img src="https://img.shields.io/badge/GitHub-Xabbo%20Forks-ff3b30?style=flat-square&logo=github&logoColor=ffffff&labelColor=0b0f14" alt="GitHub Xabbo Forks" />
+  </a>
+  <a href="https://discord.gg/JRxbfhuc3T">
+    <img src="https://img.shields.io/badge/Discord-Community-ff3b30?style=flat-square&logo=discord&logoColor=ffffff&labelColor=0b0f14" alt="Discord Community" />
+  </a>
+</p>
+
+| Fonte | Papel no projeto |
+| :-- | :-- |
+| [Xabbo APIs](https://xabbo.io) | APIs e referencias tecnicas usadas como base. |
+| [Xabbo Forks](https://github.com/xabbo/xabbo/forks) | Forks e projetos derivados do repositorio principal. |
+| [b7c](https://github.com/b7c) | Credito principal pela stack Xabbo. |
+| [QDaves](https://github.com/QDaves) | Contribuicoes e apoio da comunidade. |
+| [Discord Community](https://discord.gg/JRxbfhuc3T) | Espaco para suporte, novidades e troca de conhecimento. |
+
+---
+
 ## Suporte
 Para duvidas, sugestoes ou bugs:
 - Repositorio: `https://github.com/turkosx/red-xabbo`
 - Suporte tecnico (Issues): `https://github.com/turkosx/red-xabbo/issues`
+- Discord da comunidade: `https://discord.gg/JRxbfhuc3T`
 
 ---
 
