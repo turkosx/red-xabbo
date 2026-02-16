@@ -6,6 +6,7 @@ using Xabbo.Core.Events;
 using Xabbo.Services.Abstractions;
 using Xabbo.Configuration;
 using Xabbo.Core.GameData;
+using Xabbo.Utility;
 
 namespace Xabbo.Components;
 
@@ -19,6 +20,7 @@ public partial class ChatComponent : Component
     private AppConfig Settings => _settingsProvider.Value;
 
     private HashSet<string> _petCommands = new(StringComparer.OrdinalIgnoreCase);
+    private HashSet<int> _wiredMessageStyles = new() { WiredMessageStyleUtility.LegacyWiredMessageStyle };
 
     public ChatComponent(
         IExtension extension,
@@ -33,9 +35,8 @@ public partial class ChatComponent : Component
         _roomManager = roomManager;
         _roomManager.AvatarChat += OnAvatarChat;
 
-        _settingsProvider = settingsProvider;
-
         _gameData.Loaded += OnGameDataLoaded;
+        OnGameDataLoaded();
     }
 
     private void OnGameDataLoaded()
@@ -53,6 +54,7 @@ public partial class ChatComponent : Component
         }
 
         _petCommands = petCommands;
+        _wiredMessageStyles = WiredMessageStyleUtility.GetWiredMessageStyles(_gameData.Texts);
     }
 
     private void OnAvatarChat(AvatarChatEventArgs e)
@@ -97,7 +99,11 @@ public partial class ChatComponent : Component
             }
         }
 
-        if (Settings.Chat.MuteWired && e.BubbleStyle == 34) e.Block();
+        if (Settings.Chat.MuteWired &&
+            WiredMessageStyleUtility.IsWiredMessage(e.ChatType, e.BubbleStyle, _wiredMessageStyles))
+        {
+            e.Block();
+        }
     }
 
     [InterceptOut(nameof(Out.Chat))]

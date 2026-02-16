@@ -12,8 +12,10 @@ using FluentIcons.Avalonia.Fluent;
 using Xabbo.Core;
 using Xabbo.Core.Game;
 using Xabbo.Core.Events;
+using Xabbo.Core.GameData;
 using Xabbo.Configuration;
 using Xabbo.Services.Abstractions;
+using Xabbo.Utility;
 
 using IconSource = FluentAvalonia.UI.Controls.IconSource;
 
@@ -31,8 +33,10 @@ public class ChatPageViewModel : PageViewModel
     private readonly IGameStateService _gameState;
     private readonly IFigureConverterService _figureConverter;
 
+    private readonly IGameDataManager _gameDataManager;
     private readonly RoomManager _roomManager;
     private readonly ProfileManager _profileManager;
+    private HashSet<int> _wiredMessageStyles = new() { WiredMessageStyleUtility.LegacyWiredMessageStyle };
 
     public ChatLogConfig Config => Settings.Chat.Log;
 
@@ -58,6 +62,7 @@ public class ChatPageViewModel : PageViewModel
         IClipboardService clipboard,
         IGameStateService gameState,
         IFigureConverterService figureConverter,
+        IGameDataManager gameDataManager,
         RoomManager roomManager,
         ProfileManager profileManager)
         : base(localizationService)
@@ -66,8 +71,11 @@ public class ChatPageViewModel : PageViewModel
         _clipboard = clipboard;
         _gameState = gameState;
         _figureConverter = figureConverter;
+        _gameDataManager = gameDataManager;
         _roomManager = roomManager;
         _profileManager = profileManager;
+
+        _gameDataManager.Loaded += OnGameDataLoaded;
 
         _roomManager.Entered += OnEnteredRoom;
         _roomManager.AvatarAdded += OnAvatarAdded;
@@ -86,6 +94,7 @@ public class ChatPageViewModel : PageViewModel
             .Subscribe();
 
         CopySelectedEntriesCmd = ReactiveCommand.Create(CopySelectedEntries);
+        OnGameDataLoaded();
     }
 
     private void CopySelectedEntries()
@@ -177,13 +186,20 @@ public class ChatPageViewModel : PageViewModel
         RoomOwner = e.Room.Data?.OwnerName ?? "?"
     });
 
+    private void OnGameDataLoaded()
+    {
+        _wiredMessageStyles = WiredMessageStyleUtility.GetWiredMessageStyles(_gameDataManager.Texts);
+    }
+
     private void RoomManager_AvatarChat(AvatarChatEventArgs e)
     {
+        bool isWiredMessage = WiredMessageStyleUtility.IsWiredMessage(e.ChatType, e.BubbleStyle, _wiredMessageStyles);
+
         if (!Settings.Chat.Log.Normal && e is { Avatar.Type: AvatarType.User, ChatType: not ChatType.Whisper }) return;
-        if (!Settings.Chat.Log.Whispers && e is { ChatType: ChatType.Whisper, BubbleStyle: not 34 }) return;
+        if (!Settings.Chat.Log.Whispers && e.ChatType == ChatType.Whisper && !isWiredMessage) return;
         if (!Settings.Chat.Log.Bots && e.Avatar.Type is AvatarType.PublicBot or AvatarType.PrivateBot) return;
         if (!Settings.Chat.Log.Pets && e.Avatar.Type is AvatarType.Pet) return;
-        if (!Settings.Chat.Log.Wired && e is { ChatType: ChatType.Whisper, BubbleStyle: 34 }) return;
+        if (!Settings.Chat.Log.Wired && isWiredMessage) return;
 
         IRoom? room = _roomManager.Room;
         if (room is null) return;
