@@ -1,21 +1,21 @@
 <p align="center">
-  <img src="ext/screenshot.png" alt="redxabbo screenshot" />
+  <img src="ext/screenshot.png" alt="captura de tela do redxabbo" />
 </p>
 
 <h1 align="center">redxabbo</h1>
 
 <p align="center">
-  Extensao para G-Earth focada em produtividade, praticidade e qualidade de uso no Habbo.
+  Ferramenta para usar no G-Earth/Habbo.
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/.NET-8-ff3b30?style=flat-square&logo=dotnet&logoColor=ffffff&labelColor=0b0f14" alt=".NET 8" />
   <img src="https://img.shields.io/badge/C%23-12-ff3b30?style=flat-square&logo=csharp&logoColor=ffffff&labelColor=0b0f14" alt="C#" />
-  <img src="https://img.shields.io/badge/Avalonia-UI-ff3b30?style=flat-square&labelColor=0b0f14" alt="Avalonia UI" />
-  <img src="https://img.shields.io/badge/G--Earth-Extension-ff3b30?style=flat-square&labelColor=0b0f14" alt="G-Earth Extension" />
-  <img src="https://img.shields.io/badge/Platforms-Windows%20%7C%20Linux%20%7C%20macOS-ff3b30?style=flat-square&labelColor=0b0f14" alt="Platforms" />
-  <img src="https://img.shields.io/badge/Habbo-Flash%20%7C%20Origins-ff3b30?style=flat-square&labelColor=0b0f14" alt="Habbo Clients" />
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-ff3b30?style=flat-square&labelColor=0b0f14" alt="License MIT" /></a>
+  <img src="https://img.shields.io/badge/Interface-Avalonia-ff3b30?style=flat-square&labelColor=0b0f14" alt="Interface Avalonia" />
+  <img src="https://img.shields.io/badge/Integracao-G--Earth-ff3b30?style=flat-square&labelColor=0b0f14" alt="Integracao com G-Earth" />
+  <img src="https://img.shields.io/badge/Plataformas-Windows%20%7C%20Linux%20%7C%20macOS-ff3b30?style=flat-square&labelColor=0b0f14" alt="Plataformas" />
+  <img src="https://img.shields.io/badge/Clientes-Flash%20%7C%20Origins-ff3b30?style=flat-square&labelColor=0b0f14" alt="Clientes Habbo" />
+  <a href="LICENSE"><img src="https://img.shields.io/badge/Licenca-MIT-ff3b30?style=flat-square&labelColor=0b0f14" alt="Licenca MIT" /></a>
 </p>
 
 <p align="center">
@@ -23,134 +23,145 @@
     <img src="https://img.shields.io/badge/Repositorio-GitHub-ff3b30?style=flat-square&logo=github&logoColor=ffffff&labelColor=0b0f14" alt="Repositorio" />
   </a>
   <a href="https://github.com/turkosx/red-xabbo/releases">
-    <img src="https://img.shields.io/badge/Releases-GitHub-ff3b30?style=flat-square&logo=github&logoColor=ffffff&labelColor=0b0f14" alt="Releases" />
+    <img src="https://img.shields.io/badge/Versoes-GitHub-ff3b30?style=flat-square&logo=github&logoColor=ffffff&labelColor=0b0f14" alt="Versoes" />
   </a>
   <a href="https://github.com/turkosx/red-xabbo/issues">
     <img src="https://img.shields.io/badge/Suporte-Issues-ff3b30?style=flat-square&logo=github&logoColor=ffffff&labelColor=0b0f14" alt="Suporte" />
   </a>
-  <a href="LICENSE">
-    <img src="https://img.shields.io/badge/Licenca-MIT-ff3b30?style=flat-square&logo=bookstack&logoColor=ffffff&labelColor=0b0f14" alt="Licenca" />
-  </a>
 </p>
 
 ---
 
-## Visao geral
-O `redxabbo` e uma extensao para usar junto com o `G-Earth`.
+## O que e o redxabbo
+O `redxabbo` e uma extensao para uso com o `G-Earth` no Habbo.
 
-Ela oferece uma interface simples com ferramentas de uso diario, como:
-- controles de sala e chat
-- utilitarios de visualizacao
-- busca de usuario em quartos (`Search/Buscar`)
-- suporte de idioma (`PT-BR` e `EN`)
+O foco do projeto e facilitar tarefas do dia a dia, reduzir acoes repetitivas e dar mais visibilidade do que acontece no quarto e no chat.
 
-Compatibilidade:
-- Sistemas: Windows, Linux, macOS
-- Clientes Habbo: Flash e Origins
-- Runtime: .NET 8
+---
+
+## Recursos principais
+- Ferramentas de quarto: moderacao, visualizacao de usuarios, furni e visitantes.
+- Controles de chat: filtros, silenciar tipos de mensagem e alertas.
+- Utilitarios de produtividade: busca de usuario em quartos, atalhos e automacoes.
+- Interface em dois idiomas: `PT-BR` e `EN`.
 
 ---
 
 ## Requisitos
-Para usar:
-1. G-Earth instalado e funcionando.
-2. `.NET 8 Runtime` instalado.
+Para usar o `redxabbo`, voce precisa de:
+1. `G-Earth` instalado e funcionando.
+2. Habbo aberto pelo `G-Earth`.
+3. `.NET 8 Runtime` instalado no sistema.
 
 <p>
   <a href="https://dotnet.microsoft.com/en-us/download/dotnet/8.0">
-    <img src="https://img.shields.io/badge/Download-.NET%208%20Runtime-ff3b30?style=flat-square&logo=dotnet&logoColor=ffffff&labelColor=0b0f14" alt="Download .NET 8 Runtime" />
+    <img src="https://img.shields.io/badge/Baixar-.NET%208%20Runtime-ff3b30?style=flat-square&logo=dotnet&logoColor=ffffff&labelColor=0b0f14" alt="Baixar .NET 8 Runtime" />
   </a>
 </p>
 
 ---
 
-## Instalacao
-### Opcao 1: pelo release oficial
+## Download
+Baixe sempre pela pagina oficial de versoes:
+
 <p>
   <a href="https://github.com/turkosx/red-xabbo/releases">
-    <img src="https://img.shields.io/badge/Download-Releases-ff3b30?style=flat-square&logo=github&logoColor=ffffff&labelColor=0b0f14" alt="Download Releases" />
+    <img src="https://img.shields.io/badge/Baixar-Versoes-ff3b30?style=flat-square&logo=github&logoColor=ffffff&labelColor=0b0f14" alt="Baixar versoes" />
   </a>
 </p>
 
-1. Baixe a versao mais recente.
-2. Importe/instale no G-Earth.
-3. Inicie a extensao `redxabbo`.
+### Arquivos da versao
+- `red-xabbo.exe`: executavel para Windows (arquivo principal para usuario final).
+- `red-xabbo-source.zip`: codigo-fonte em `.zip` (para desenvolvimento).
+- `red-xabbo-source.tar.gz`: codigo-fonte em `.tar.gz` (para desenvolvimento).
+- arquivos do GitHub chamados `Source code (zip)` e `Source code (tar.gz)`: gerados automaticamente em toda versao.
 
-### Opcao 2: pacote pronto
-Se voce recebeu `extension.zip` e `extension.json`:
-1. Abra o G-Earth.
-2. Importe o pacote da extensao.
-3. Inicie o `redxabbo`.
+---
+
+## Instalacao e uso (Windows)
+1. Baixe o arquivo `red-xabbo.exe` na versao mais recente.
+2. Abra o `G-Earth`.
+3. Abra o Habbo pelo `G-Earth` e conecte em um quarto.
+4. Execute `red-xabbo.exe`.
+5. Use normalmente as abas da interface.
+
+Se o Windows SmartScreen bloquear na primeira execucao, clique em "Mais informacoes" e depois em "Executar assim mesmo".
 
 ---
 
 ## Primeiro uso
-1. Abra o G-Earth.
-2. Conecte no Habbo pelo G-Earth.
-3. Inicie o `redxabbo`.
-4. Use as abas da interface.
+Sugestao de configuracao inicial:
+1. Abra a aba `Configuracoes`.
+2. Defina o idioma da interface.
+3. Revise as opcoes de chat, alertas e intervalos de operacao.
 
 Abas mais usadas:
-- `General`: configuracoes rapidas, ferramentas e busca
-- `Room`: informacoes e operacoes de quarto
-- `Chat`: monitoramento de mensagens
-- `Friends`, `Inventory`, `Wardrobe`, `Game data`: utilitarios extras
-- `Settings`: ajustes gerais e idioma
+- `Geral`: ferramentas rapidas, anti-funcoes, chat e busca.
+- `Quarto`: dados do quarto, usuarios, visitantes, banimentos e furni.
+- `Chat`: monitoramento de mensagens e eventos.
+- `Amigos`, `Inventario`, `Guarda-roupa`, `Navegador`, `Perfil`: utilitarios adicionais.
+- `Configuracoes`: idioma e ajustes globais.
 
 ---
 
-## Busca de usuario (Search / Buscar)
-Para buscar um usuario:
-1. Abra `General > Buscar`.
+## Busca de usuario
+Para buscar um usuario em quartos abertos:
+1. Abra `Geral > Buscar`.
 2. Digite o nome do usuario.
 3. Clique em `Buscar`.
-4. Acompanhe o `Status`.
-5. Clique em `Parar` se quiser interromper.
+4. Acompanhe o campo `Status`.
+5. Clique em `Parar` para interromper.
 
-Quando encontra, a extensao retorna ao quarto encontrado e recarrega o ambiente.
-
----
-
-## Idioma
-O redxabbo suporta `PT-BR` e `EN`.
-
-Voce pode alterar idioma pelo botao de idioma na interface principal ou pelas configuracoes.
+Quando o usuario e encontrado, a extensao informa o quarto correspondente.
 
 ---
 
-## Problemas comuns
-### A extensao nao abre
-- Verifique o `.NET 8 Runtime`.
-- Feche e abra novamente o G-Earth.
+## Solucao de problemas
+### O redxabbo nao abre
+- Verifique se o `.NET 8 Runtime` esta instalado.
+- Tente executar o `red-xabbo.exe` como administrador.
+- Feche e abra o `G-Earth` novamente.
 
-### A extensao nao conecta
-- Confirme que o Habbo foi aberto pelo G-Earth.
-- Verifique se o G-Earth esta conectado.
+### O redxabbo abre, mas nao conecta
+- Confirme que o Habbo foi iniciado pelo `G-Earth`.
+- Confira se o `G-Earth` esta conectado e interceptando normalmente.
+- Feche e abra novamente o Habbo e depois o redxabbo.
 
-### Busca nao encontra o usuario
-- O usuario pode nao estar em quarto aberto no momento.
-- Tente novamente apos alguns segundos.
-- Confira o nome exatamente como aparece no Habbo.
+### A busca nao encontra o usuario
+- O usuario pode nao estar em quarto aberto/publico naquele momento.
+- Aguarde alguns segundos e tente novamente.
+- Confira se o nome foi digitado exatamente igual ao do Habbo.
+
+### Quero restaurar configuracoes
+Os arquivos locais ficam em `%APPDATA%\\xabbo\\`:
+- `config.json`
+- `wardrobe.json`
+- `passwords.json`
+
+Feche o app antes de editar ou remover esses arquivos.
+
+---
+
+## Privacidade
+Se a opcao de lembrar senhas de quarto estiver ativa, as senhas sao salvas localmente em `%APPDATA%\\xabbo\\passwords.json` em texto simples.
+
+Use essa opcao apenas em computador confiavel.
 
 ---
 
 ## Suporte
-<p>
-  <a href="https://github.com/turkosx/red-xabbo">
-    <img src="https://img.shields.io/badge/Repositorio-GitHub-ff3b30?style=flat-square&logo=github&logoColor=ffffff&labelColor=0b0f14" alt="Repositorio" />
-  </a>
-  <a href="https://github.com/turkosx/red-xabbo/issues">
-    <img src="https://img.shields.io/badge/Reportar%20problema-Issues-ff3b30?style=flat-square&logo=github&logoColor=ffffff&labelColor=0b0f14" alt="Issues" />
-  </a>
-</p>
+Para duvidas, sugestoes ou bugs:
+- Repositorio: `https://github.com/turkosx/red-xabbo`
+- Suporte tecnico (Issues): `https://github.com/turkosx/red-xabbo/issues`
 
 ---
 
-## Para desenvolvedores (opcional)
+## Para desenvolvimento (opcional)
+Se voce quer compilar o projeto localmente:
+
 ```bash
-git clone https://github.com/turkosx/red-xabbo.git
+git clone --recurse-submodules https://github.com/turkosx/red-xabbo.git
 cd red-xabbo
-git submodule update --init --recursive
 dotnet restore
 dotnet run --project src/Xabbo.Avalonia
 ```
@@ -159,4 +170,4 @@ dotnet run --project src/Xabbo.Avalonia
 
 ## Licenca
 Este projeto usa a licenca MIT.
-Veja o arquivo `LICENSE`.
+Consulte o arquivo `LICENSE`.
