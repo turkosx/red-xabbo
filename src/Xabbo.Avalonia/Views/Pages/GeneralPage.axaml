@@ -176,6 +176,12 @@
                 IsChecked="{Binding ClickTo.Bounce}"
                 ToolTip.Tip="{Binding [general.clickTo.bounceTip]}"
               />
+              <CheckBox
+                Classes="modern"
+                Content="{Binding [general.clickTo.silenceToggle]}"
+                IsChecked="{Binding ClickTo.SilenceToggle}"
+                ToolTip.Tip="{Binding [general.clickTo.silenceToggleTip]}"
+              />
               <StackPanel Orientation="Horizontal" Spacing="8">
                 <TextBlock
                   Margin="0,0,10,0"

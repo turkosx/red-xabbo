@@ -28,6 +28,7 @@ public partial class ClickToController(
     private readonly ProfileManager _profileManager = profileManager;
     private readonly FriendManager _friendManager = friendManager;
     private readonly RoomManager _roomManager = roomManager;
+    private readonly HashSet<Id> _silencedUserIds = [];
     private Id _lastClickToUserId = -1;
     private long _lastClickToTimestamp;
 
@@ -48,6 +49,7 @@ public partial class ClickToController(
     [Reactive] public bool BanPerm { get; set; }
 
     [Reactive] public bool Bounce { get; set; }
+    [Reactive] public bool SilenceToggle { get; set; }
 
     [Intercept(~ClientType.Shockwave)]
     [InterceptOut(nameof(Out.GetSelectedBadges))]
@@ -157,7 +159,11 @@ public partial class ClickToController(
         if (Config.General.ClickToIgnoresFriends && _friendManager.IsFriend(user.Id))
             return;
 
-        if (Mute)
+        if (SilenceToggle)
+        {
+            ToggleUserSilence(user);
+        }
+        else if (Mute)
         {
             if (!_moderation.CanMute)
                 return;
@@ -225,6 +231,25 @@ public partial class ClickToController(
             });
         }
 
+    }
+
+    private void ToggleUserSilence(IUser user)
+    {
+        // Ignore/Unignore packets are only available for modern clients.
+        if (Session.Is(ClientType.Shockwave) || user.Id < 0)
+            return;
+
+        if (_silencedUserIds.Remove(user.Id))
+        {
+            SendInfoMessage(this["general.clickTo.info.unsilencing"], user.Index);
+            Send(Out.UnignoreUser, user.Id);
+        }
+        else
+        {
+            _silencedUserIds.Add(user.Id);
+            SendInfoMessage(this["general.clickTo.info.silencing"], user.Index);
+            Send(Out.IgnoreUser, user.Id);
+        }
     }
 
     private string GetClickToMuteInfoMessage()
