@@ -1,5 +1,6 @@
 ﻿using Xabbo.Messages.Flash;
 using Xabbo.Extension;
+using Xabbo.Messages;
 using Xabbo.Core;
 using Xabbo.Core.Game;
 using Xabbo.Core.Messages.Outgoing;
@@ -28,9 +29,18 @@ public partial class ClickToController(
     private readonly ProfileManager _profileManager = profileManager;
     private readonly FriendManager _friendManager = friendManager;
     private readonly RoomManager _roomManager = roomManager;
+    private readonly HashSet<Id> _blockedUserIds = [];
     private readonly HashSet<Id> _silencedUserIds = [];
     private Id _lastClickToUserId = -1;
     private long _lastClickToTimestamp;
+    private static readonly Identifier[] BlockUserIdentifiers = [
+        (Direction.Out, "BlockUser"),
+        (Direction.Out, "BlockUserMessageComposer"),
+    ];
+    private static readonly Identifier[] UnblockUserIdentifiers = [
+        (Direction.Out, "UnblockUser"),
+        (Direction.Out, "UnblockUserMessageComposer"),
+    ];
 
     private AppConfig Config => _config.Value;
     private const int ClickToDedupMs = 300;
@@ -49,6 +59,7 @@ public partial class ClickToController(
     [Reactive] public bool BanPerm { get; set; }
 
     [Reactive] public bool Bounce { get; set; }
+    [Reactive] public bool BlockToggle { get; set; }
     [Reactive] public bool SilenceToggle { get; set; }
 
     [Intercept(~ClientType.Shockwave)]
@@ -159,7 +170,11 @@ public partial class ClickToController(
         if (Config.General.ClickToIgnoresFriends && _friendManager.IsFriend(user.Id))
             return;
 
-        if (SilenceToggle)
+        if (BlockToggle)
+        {
+            ToggleUserBlock(user);
+        }
+        else if (SilenceToggle)
         {
             ToggleUserSilence(user);
         }
@@ -233,6 +248,36 @@ public partial class ClickToController(
 
     }
 
+    private void ToggleUserBlock(IUser user)
+    {
+        // Block/Unblock packets are only available for modern clients.
+        if (Session.Is(ClientType.Shockwave) || user.Id < 0)
+            return;
+
+        if (_blockedUserIds.Contains(user.Id))
+        {
+            if (!TrySendClickToPacket(UnblockUserIdentifiers, user.Id))
+            {
+                SendInfoMessage(this["general.clickTo.info.blockUnavailable"], user.Index);
+                return;
+            }
+
+            _blockedUserIds.Remove(user.Id);
+            SendInfoMessage(this["general.clickTo.info.unblocking"], user.Index);
+        }
+        else
+        {
+            if (!TrySendClickToPacket(BlockUserIdentifiers, user.Id))
+            {
+                SendInfoMessage(this["general.clickTo.info.blockUnavailable"], user.Index);
+                return;
+            }
+
+            _blockedUserIds.Add(user.Id);
+            SendInfoMessage(this["general.clickTo.info.blocking"], user.Index);
+        }
+    }
+
     private void ToggleUserSilence(IUser user)
     {
         // Ignore/Unignore packets are only available for modern clients.
@@ -250,6 +295,20 @@ public partial class ClickToController(
             SendInfoMessage(this["general.clickTo.info.silencing"], user.Index);
             Send(Out.IgnoreUser, user.Id);
         }
+    }
+
+    private bool TrySendClickToPacket(ReadOnlySpan<Identifier> identifiers, Id userId)
+    {
+        foreach (Identifier identifier in identifiers)
+        {
+            if (Ext.Messages.TryGetHeader(identifier, out Header header))
+            {
+                Send(header, userId);
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private string GetClickToMuteInfoMessage()

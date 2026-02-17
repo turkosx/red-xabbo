@@ -182,6 +182,12 @@
                 IsChecked="{Binding ClickTo.SilenceToggle}"
                 ToolTip.Tip="{Binding [general.clickTo.silenceToggleTip]}"
               />
+              <CheckBox
+                Classes="modern"
+                Content="{Binding [general.clickTo.blockToggle]}"
+                IsChecked="{Binding ClickTo.BlockToggle}"
+                ToolTip.Tip="{Binding [general.clickTo.blockToggleTip]}"
+              />
               <StackPanel Orientation="Horizontal" Spacing="8">
                 <TextBlock
                   Margin="0,0,10,0"
