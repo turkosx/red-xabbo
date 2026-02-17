@@ -7,7 +7,6 @@ using Xabbo.Core.Messages.Incoming;
 using Xabbo.Services.Abstractions;
 using Xabbo.Configuration;
 using Xabbo.Controllers;
-using Humanizer;
 
 namespace Xabbo.Components;
 
@@ -29,8 +28,11 @@ public partial class ClickToController(
     private readonly ProfileManager _profileManager = profileManager;
     private readonly FriendManager _friendManager = friendManager;
     private readonly RoomManager _roomManager = roomManager;
+    private Id _lastClickToUserId = -1;
+    private long _lastClickToTimestamp;
 
     private AppConfig Config => _config.Value;
+    private const int ClickToDedupMs = 300;
 
     [Reactive] public bool Enabled { get; set; }
 
@@ -51,16 +53,60 @@ public partial class ClickToController(
     [InterceptOut(nameof(Out.GetSelectedBadges))]
     void OnGetSelectedBadges(Intercept e)
     {
-        if (!Enabled || !_roomManager.EnsureInRoom(out var room))
+        if (!Enabled)
             return;
 
-        HandleClickUser(room.GetAvatarById<IUser>(e.Packet.Read<Id>()));
+        HandleClickUserById(e.Packet.Read<Id>());
+    }
+
+    [Intercept(~ClientType.Shockwave)]
+    [InterceptOut(nameof(Out.GetExtendedProfile))]
+    void OnGetExtendedProfile(Intercept e)
+    {
+        if (!Enabled || e.Packet.Length < 5)
+            return;
+
+        Id userId = e.Packet.Read<Id>();
+        bool open = e.Packet.Read<bool>();
+
+        if (open)
+            return;
+
+        HandleClickUserById(userId);
+    }
+
+    [Intercept(~ClientType.Shockwave)]
+    [InterceptOut(nameof(Out.GetRelationshipStatusInfo))]
+    void OnGetRelationshipStatusInfo(Intercept e)
+    {
+        if (!Enabled || e.Packet.Length < 4)
+            return;
+
+        HandleClickUserById(e.Packet.Read<Id>());
     }
 
     private bool CanClickTo(IUser user) =>
         user.Id != _profileManager.UserData?.Id &&
         user.Name != _profileManager.UserData?.Name &&
-        (!Config.General.ClickToIgnoresFriends || !_friendManager.IsFriend(user.Name));
+        (!Config.General.ClickToIgnoresFriends || !_friendManager.IsFriend(user.Id));
+
+    private void HandleClickUserById(Id userId)
+    {
+        if (userId < 0 || !_roomManager.EnsureInRoom(out IRoom? room))
+            return;
+
+        long now = Environment.TickCount64;
+        if (_lastClickToUserId == userId &&
+            now - _lastClickToTimestamp >= 0 &&
+            now - _lastClickToTimestamp < ClickToDedupMs)
+        {
+            return;
+        }
+
+        _lastClickToUserId = userId;
+        _lastClickToTimestamp = now;
+        HandleClickUser(room.GetAvatarById<IUser>(userId));
+    }
 
     // Use LookTo on Shockwave as it doesn't have GetSelectedBadges
     // TODO: allow [Intercept(ClientType.Shockwave)] in Xabbo.Common.Generator
@@ -125,7 +171,7 @@ public partial class ClickToController(
             if (muteMinutes > 30000)
                 muteMinutes = 30000;
 
-            SendInfoMessage($"(click-muting user for {(MuteInMinutes ? "minute" : "hour").ToQuantity(MuteValue)}", user.Index);
+            SendInfoMessage(GetClickToMuteInfoMessage(), user.Index);
             Send(new MuteUserMsg(user.Id, room.Id, muteMinutes));
         }
         else if (Kick)
@@ -133,7 +179,7 @@ public partial class ClickToController(
             if (!_roomManager.CanKick)
                 return;
 
-            SendInfoMessage("(click-kicking user)", user.Index);
+            SendInfoMessage(this["general.clickTo.info.kicking"], user.Index);
             Send(new KickUserMsg(user.Id, user.Name));
         }
         else if (Ban)
@@ -142,27 +188,27 @@ public partial class ClickToController(
                 return;
 
             BanDuration duration;
-            string banText;
+            string banInfoKey;
 
             if (BanDay)
             {
                 duration = BanDuration.Day;
-                banText = "for a day";
+                banInfoKey = "general.clickTo.info.banningDay";
             }
             else if (BanHour)
             {
                 duration = BanDuration.Hour;
-                banText = "for an hour";
+                banInfoKey = "general.clickTo.info.banningHour";
             }
             else if (BanPerm)
             {
                 duration = BanDuration.Permanent;
-                banText = "permanently";
+                banInfoKey = "general.clickTo.info.banningPermanent";
             }
             else
                 return;
 
-            SendInfoMessage($"(click-banning user {banText})", user.Index);
+            SendInfoMessage(this[banInfoKey], user.Index);
             Send(new BanUserMsg(user.Id, user.Name, room.Id, duration));
         }
         else if (Bounce)
@@ -171,7 +217,7 @@ public partial class ClickToController(
                 return;
 
             Task.Run(async () => {
-                SendInfoMessage($"(click-bouncing user)", user.Index);
+                SendInfoMessage(this["general.clickTo.info.bouncing"], user.Index);
                 Send(new BanUserMsg(user.Id, user.Name, room.Id, BanDuration.Hour));
                 if (Config.General.BounceUnbanDelay > 0)
                     await Task.Delay(Config.General.BounceUnbanDelay);
@@ -179,6 +225,15 @@ public partial class ClickToController(
             });
         }
 
+    }
+
+    private string GetClickToMuteInfoMessage()
+    {
+        string unit = MuteInMinutes
+            ? (MuteValue == 1 ? this["general.clickTo.info.minute"] : this["general.clickTo.info.minutes"])
+            : (MuteValue == 1 ? this["general.clickTo.info.hour"] : this["general.clickTo.info.hours"]);
+
+        return string.Format(this["general.clickTo.info.mutingFor"], MuteValue, unit);
     }
 
     private void SendInfoMessage(string message, int avatarIndex = -1) => Send(new AvatarWhisperMsg(message, avatarIndex));
