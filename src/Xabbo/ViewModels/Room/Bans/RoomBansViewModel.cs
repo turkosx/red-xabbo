@@ -58,6 +58,7 @@ public class RoomBansViewModel : ViewModelBase
         RoomManager roomManager,
         RoomModerationController moderation)
     {
+        InitializeLocalization();
         Log = loggerFactory.CreateLogger<RoomBansViewModel>();
         _uiCtx = uiContext;
         _dialogService = dialogService;

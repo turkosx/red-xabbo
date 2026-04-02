@@ -90,6 +90,9 @@ public sealed class FriendsPageViewModel : PageViewModel
         _friendManager.FriendAdded += OnFriendAdded;
         _friendManager.FriendUpdated += OnFriendUpdated;
         _friendManager.FriendRemoved += OnFriendRemoved;
+
+        if (_friendManager.IsInitialized || _friendManager.Friends.Any())
+            SyncFriendsFromManager();
     }
 
     static Func<FriendViewModel, bool> CreateFilter(string? filterText, bool onlineOnly) => (vm) => {
@@ -172,16 +175,41 @@ public sealed class FriendsPageViewModel : PageViewModel
         this.RaisePropertyChanged(nameof(Header));
     }
 
-    private void OnFriendsLoaded()
+    private void RunOnUi(Action action)
     {
-        foreach (var friend in _friendManager.Friends)
-            AddFriend(friend);
-        IsLoading = false;
+        if (_uiContext.IsSynchronized)
+            action();
+        else
+            _uiContext.Invoke(action);
     }
-    private void OnFriendsCleared() => _cache.Clear();
-    private void OnFriendAdded(FriendEventArgs args) => AddFriend(args.Friend);
-    private void OnFriendUpdated(FriendEventArgs args) => UpdateFriend(args.Friend);
-    private void OnFriendRemoved(FriendEventArgs args) => RemoveFriend(args.Friend.Id);
+
+    private void SyncFriendsFromManager()
+    {
+        RunOnUi(() => {
+            _cache.Edit(cache => {
+                cache.Clear();
+                cache.AddOrUpdate(_friendManager.Friends.Select(CreateViewModel));
+            });
+
+            IsLoading = false;
+            this.RaisePropertyChanged(nameof(Header));
+        });
+    }
+
+    private void OnFriendsLoaded() => SyncFriendsFromManager();
+
+    private void OnFriendsCleared()
+    {
+        RunOnUi(() => {
+            _cache.Clear();
+            IsLoading = true;
+            this.RaisePropertyChanged(nameof(Header));
+        });
+    }
+
+    private void OnFriendAdded(FriendEventArgs args) => RunOnUi(() => AddFriend(args.Friend));
+    private void OnFriendUpdated(FriendEventArgs args) => RunOnUi(() => UpdateFriend(args.Friend));
+    private void OnFriendRemoved(FriendEventArgs args) => RunOnUi(() => RemoveFriend(args.Friend.Id));
 
     private void FollowFriend(FriendViewModel friend)
     {

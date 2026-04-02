@@ -39,6 +39,7 @@ public class RoomVisitorsViewModel : ViewModelBase
         IExtension extension,
         ProfileManager profileManager, RoomManager roomManager)
     {
+        InitializeLocalization();
         _logger = loggerFactory.CreateLogger<RoomVisitorsViewModel>();
         _context = context;
         _ext = extension;

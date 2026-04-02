@@ -6,7 +6,7 @@
 	url = https://github.com/xabbo/gearth
 [submodule "Xabbo.Core"]
 	path = lib/core
-	url = https://github.com/xabbo/core
+	url = https://github.com/turkosx/core
 [submodule "Xabbo.Messages"]
 	path = lib/messages
 	url = https://github.com/xabbo/messages

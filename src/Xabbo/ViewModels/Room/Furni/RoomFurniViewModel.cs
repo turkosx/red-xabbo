@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Linq.Dynamic.Core;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -16,6 +15,7 @@ using Xabbo.Core.Events;
 using Xabbo.Core.Game;
 using Xabbo.Extension;
 using Xabbo.Services.Abstractions;
+using Xabbo.Utility;
 
 namespace Xabbo.ViewModels;
 
@@ -95,6 +95,7 @@ public partial class RoomFurniViewModel : ViewModelBase
         RoomManager roomManager,
         RoomGiftsViewModel gifts)
     {
+        InitializeLocalization();
         _config = config;
         _furniController = furniController;
         _uiCtx = uiContext;
@@ -491,9 +492,7 @@ public partial class RoomFurniViewModel : ViewModelBase
             Func<FurniViewModel, bool>? expressionFilter = null;
             if (!string.IsNullOrWhiteSpace(expression))
             {
-                expressionFilter = DynamicExpressionParser
-                    .ParseLambda<FurniViewModel, bool>(new ParsingConfig(), false, expression)
-                    .Compile();
+                expressionFilter = FurniFilterParser.Parse(expression);
             }
 
             if (filterArea is { } area)
@@ -510,9 +509,13 @@ public partial class RoomFurniViewModel : ViewModelBase
                 return (expressionFilter, null);
             }
         }
-        catch (Exception ex)
+        catch (FurniFilterParser.FurniFilterParseException ex)
         {
             return ((vm) => false, ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return ((vm) => false, $"{ex.Message} {FurniFilterParser.HelpText}");
         }
     }
 

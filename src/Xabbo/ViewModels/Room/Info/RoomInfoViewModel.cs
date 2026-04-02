@@ -23,6 +23,7 @@ public class RoomInfoViewModel : ViewModelBase
 
     public RoomInfoViewModel(IExtension extension, RoomManager roomManager)
     {
+        InitializeLocalization();
         _roomManager = roomManager;
 
         extension.Disconnected += OnGameDisconnected;

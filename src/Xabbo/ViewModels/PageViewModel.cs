@@ -6,21 +6,15 @@ namespace Xabbo.ViewModels;
 
 public abstract class PageViewModel : ViewModelBase
 {
-    protected ILocalizationService Localizer { get; }
-
     protected PageViewModel(ILocalizationService localizationService)
     {
-        Localizer = localizationService;
-        Localizer.LanguageChanged += HandleLanguageChanged;
+        InitializeLocalization(localizationService);
     }
 
-    protected string T(string key) => Localizer.Get(key);
-
-    private void HandleLanguageChanged() => OnLanguageChanged();
-    protected virtual void OnLanguageChanged()
+    protected override void OnLanguageChanged()
     {
+        base.OnLanguageChanged();
         this.RaisePropertyChanged(nameof(Header));
-        this.RaisePropertyChanged("Item[]");
     }
 
     public virtual bool SelectsOnInvoked => true;

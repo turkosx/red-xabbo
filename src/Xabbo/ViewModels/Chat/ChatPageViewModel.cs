@@ -97,6 +97,17 @@ public class ChatPageViewModel : PageViewModel
         OnGameDataLoaded();
     }
 
+    protected override void OnLanguageChanged()
+    {
+        base.OnLanguageChanged();
+
+        foreach (var entry in _cache.Items)
+        {
+            if (entry is ChatLogRoomEntryViewModel roomEntry)
+                roomEntry.NotifyLocalizationChanged();
+        }
+    }
+
     private void CopySelectedEntries()
     {
         _clipboard.SetText(string.Join("\n", Selection.SelectedItems));

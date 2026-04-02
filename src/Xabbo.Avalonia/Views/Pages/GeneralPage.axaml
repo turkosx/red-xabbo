@@ -92,10 +92,20 @@
                   IsChecked="{Binding Config.Movement.NoWalk}"
                 />
                 <CheckBox
-                  Content="{Binding [general.movement.turnTowardsClickedTile]}"
-                  IsEnabled="{Binding Config.Movement.NoWalk}"
-                  IsChecked="{Binding Config.Movement.TurnTowardsClickedTile}"
+                  Content="{Binding [general.movement.shift]}"
+                  IsChecked="{Binding Config.Movement.NoWalkWhenShiftPressed}"
                 />
+                <CheckBox
+                  Content="{Binding [general.movement.turnTowardsClickedTile]}"
+                  IsChecked="{Binding Config.Movement.TurnTowardsClickedTile}"
+                >
+                  <CheckBox.IsEnabled>
+                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                      <Binding Path="Config.Movement.NoWalk" />
+                      <Binding Path="Config.Movement.NoWalkWhenShiftPressed" />
+                    </MultiBinding>
+                  </CheckBox.IsEnabled>
+                </CheckBox>
               </StackPanel>
               <CheckBox
                 Content="{Binding [general.movement.clickThroughUsers]}"

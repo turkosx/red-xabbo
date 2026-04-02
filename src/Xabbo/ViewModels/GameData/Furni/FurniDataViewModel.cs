@@ -31,6 +31,7 @@ public class FurniDataViewModel : ViewModelBase
         IUiContext uiContext,
         IGameDataManager gameDataManager)
     {
+        InitializeLocalization();
         _extension = extension;
         _uiContext = uiContext;
         _gameDataManager = gameDataManager;

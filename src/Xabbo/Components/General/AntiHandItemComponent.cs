@@ -1,4 +1,6 @@
-﻿using Xabbo.Messages.Flash;
+using System.Diagnostics.CodeAnalysis;
+
+using Xabbo.Messages.Flash;
 using Xabbo.Extension;
 using Xabbo.Core;
 using Xabbo.Core.Game;
@@ -13,13 +15,19 @@ public partial class AntiHandItemComponent(
 )
     : Component(extension)
 {
+    private static readonly TimeSpan PendingReceivedHandItemWindow = TimeSpan.FromMilliseconds(750);
+    private static readonly TimeSpan MaintainDirectionSettleDelay = TimeSpan.FromMilliseconds(50);
+    private static readonly TimeSpan MaintainDirectionRestoreDelay = TimeSpan.FromMilliseconds(50);
+
     private readonly ProfileManager _profileManager = profileManager;
     private readonly RoomManager _roomManager = roomManager;
 
-    private readonly SemaphoreSlim semaphore = new(1, 1);
-    private DateTime lastUpdate = DateTime.MinValue;
-    private DateTime _lastReceivedAt = DateTime.MinValue;
-    private int _lastReceivedSource = -1;
+    private readonly SemaphoreSlim _maintainDirectionSemaphore = new(1, 1);
+    private DateTime _pendingReceivedAt = DateTime.MinValue;
+    private int _pendingReceivedDirection = -1;
+    private int _queuedMaintainDirection = -1;
+    private long _queuedMaintainDirectionVersion;
+    private long _handledMaintainDirectionVersion;
 
     [Reactive] public bool DropHandItem { get; set; }
     [Reactive] public bool ReturnHandItem { get; set; }
@@ -32,31 +40,28 @@ public partial class AntiHandItemComponent(
             return;
 
         int packetPosition = e.Packet.Position;
-        int source = -1;
 
         try
         {
-            if (DropHandItem || ReturnHandItem)
-                source = e.Packet.Read<int>();
+            int source = e.Packet.Read<int>();
+
+            if (!TryResolveSourceUser(source, out IUser? sender))
+                return;
+
+            if (ShouldMaintainDirection)
+            {
+                SetPendingPlayerHandItemContext();
+                if (_pendingReceivedDirection >= 0)
+                    QueueMaintainDirection(_pendingReceivedDirection);
+            }
 
             if (ReturnHandItem)
             {
-                Id targetId = ResolveUserId(source);
-                if (targetId == -1 && source > 0)
-                    targetId = source;
-
-                if (targetId > 0)
-                {
-                    _lastReceivedAt = DateTime.Now;
-                    _lastReceivedSource = source;
-                    e.Block();
-                    Ext.Send(Out.PassCarryItem, targetId);
-                }
+                e.Block();
+                Ext.Send(Out.PassCarryItem, sender.Id);
             }
             else if (DropHandItem)
             {
-                _lastReceivedAt = DateTime.Now;
-                _lastReceivedSource = source;
                 e.Block();
                 Ext.Send(Out.DropCarryItem);
             }
@@ -66,26 +71,16 @@ public partial class AntiHandItemComponent(
             if (!e.IsBlocked)
                 e.Packet.Position = packetPosition;
         }
-
-        if (ShouldMaintainDirection)
-        {
-            lastUpdate = DateTime.Now;
-            Task.Run(TryMaintainDirection);
-        }
     }
 
     [InterceptIn(nameof(In.CarryObject))]
     private void HandleCarryObject(Intercept e)
     {
-        if (!DropHandItem && !ReturnHandItem && !ShouldMaintainDirection)
+        if (!ShouldMaintainDirection)
             return;
 
-        Id selfId = _profileManager.UserData?.Id ?? -1;
-        if (_roomManager.Room is null ||
-            !_roomManager.Room.TryGetUserById(selfId, out IUser? self))
-        {
+        if (!TryGetSelfUser(out IUser? self))
             return;
-        }
 
         int packetPosition = e.Packet.Position;
         try
@@ -96,26 +91,8 @@ public partial class AntiHandItemComponent(
             if (index != self.Index || item <= 0)
                 return;
 
-            if (ShouldMaintainDirection)
-            {
-                lastUpdate = DateTime.Now;
-                Task.Run(TryMaintainDirection);
-            }
-
-            if ((DateTime.Now - _lastReceivedAt).TotalMilliseconds > 2000)
-            {
-                if (DropHandItem)
-                    Ext.Send(Out.DropCarryItem);
-                else if (ReturnHandItem)
-                {
-                    Id targetId = ResolveUserId(_lastReceivedSource);
-                    if (targetId == -1 && _lastReceivedSource > 0)
-                        targetId = _lastReceivedSource;
-
-                    if (targetId > 0)
-                        Ext.Send(Out.PassCarryItem, targetId);
-                }
-            }
+            if (TryConsumePendingPlayerHandItemDirection(out int direction))
+                QueueMaintainDirection(direction);
         }
         finally
         {
@@ -123,49 +100,109 @@ public partial class AntiHandItemComponent(
         }
     }
 
-    private Id ResolveUserId(int source)
+    private bool TryResolveSourceUser(int source, [NotNullWhen(true)] out IUser? user)
     {
+        user = null;
+
         if (source <= 0 || _roomManager.Room is null)
-            return -1;
+            return false;
 
-        if (_roomManager.Room.TryGetUserById(source, out IUser? byId))
-            return byId.Id;
-
-        if (_roomManager.Room.TryGetUserByIndex(source, out IUser? byIndex))
-            return byIndex.Id;
-
-        return -1;
+        return _roomManager.Room.TryGetUserById(source, out user) ||
+            _roomManager.Room.TryGetUserByIndex(source, out user);
     }
 
-    private async Task TryMaintainDirection()
+    private bool TryGetSelfUser([NotNullWhen(true)] out IUser? user)
     {
-        if (await semaphore.WaitAsync(0))
+        user = null;
+
+        return _roomManager.Room is not null &&
+            _roomManager.Room.TryGetUserById(_profileManager.UserData?.Id ?? -1, out user);
+    }
+
+    private void SetPendingPlayerHandItemContext()
+    {
+        if (TryGetSelfUser(out IUser? user))
         {
-            try
+            _pendingReceivedAt = DateTime.UtcNow;
+            _pendingReceivedDirection = user.Direction;
+        }
+        else
+        {
+            ClearPendingPlayerHandItemContext();
+        }
+    }
+
+    private void ClearPendingPlayerHandItemContext()
+    {
+        _pendingReceivedAt = DateTime.MinValue;
+        _pendingReceivedDirection = -1;
+    }
+
+    private bool TryConsumePendingPlayerHandItemDirection(out int direction)
+    {
+        if (_pendingReceivedDirection >= 0 &&
+            DateTime.UtcNow - _pendingReceivedAt <= PendingReceivedHandItemWindow)
+        {
+            direction = _pendingReceivedDirection;
+            ClearPendingPlayerHandItemContext();
+            return true;
+        }
+
+        ClearPendingPlayerHandItemContext();
+        direction = -1;
+        return false;
+    }
+
+    private void QueueMaintainDirection(int direction)
+    {
+        if (direction < 0)
+            return;
+
+        Volatile.Write(ref _queuedMaintainDirection, direction);
+        Interlocked.Increment(ref _queuedMaintainDirectionVersion);
+        _ = Task.Run(TryMaintainDirectionAsync);
+    }
+
+    private async Task TryMaintainDirectionAsync()
+    {
+        await _maintainDirectionSemaphore.WaitAsync();
+
+        try
+        {
+            while (true)
             {
-                if (_roomManager.Room is null ||
-                    !_roomManager.Room.TryGetUserById(_profileManager.UserData?.Id ?? -1, out IUser? user))
-                {
+                long version = Volatile.Read(ref _queuedMaintainDirectionVersion);
+                if (version == Volatile.Read(ref _handledMaintainDirectionVersion))
                     return;
-                }
 
-                int dir = user.Direction;
+                int direction = Volatile.Read(ref _queuedMaintainDirection);
+                if (direction < 0)
+                    return;
 
-                while ((DateTime.Now - lastUpdate).TotalSeconds < 1.0)
-                {
-                    do { await Task.Delay(100); }
-                    while ((DateTime.Now - lastUpdate).TotalSeconds < 1.0);
+                await Task.Delay(MaintainDirectionSettleDelay);
 
-                    (int x, int y) = H.GetMagicVector(dir);
-                    (int invX, int invY) = H.GetMagicVector(dir + 4);
+                if (version != Volatile.Read(ref _queuedMaintainDirectionVersion))
+                    continue;
 
-                    await Task.Delay(100);
-                    Ext.Send(Out.LookTo, invX, invY);
-                    await Task.Delay(100);
-                    Ext.Send(Out.LookTo, x, y);
-                }
+                (int x, int y) = H.GetMagicVector(direction);
+                (int invX, int invY) = H.GetMagicVector((direction + 4) % 8);
+
+                Ext.Send(Out.LookTo, invX, invY);
+                await Task.Delay(MaintainDirectionRestoreDelay);
+
+                if (version != Volatile.Read(ref _queuedMaintainDirectionVersion))
+                    continue;
+
+                Ext.Send(Out.LookTo, x, y);
+                Volatile.Write(ref _handledMaintainDirectionVersion, version);
+
+                if (version == Volatile.Read(ref _queuedMaintainDirectionVersion))
+                    return;
             }
-            finally { semaphore.Release(); }
+        }
+        finally
+        {
+            _maintainDirectionSemaphore.Release();
         }
     }
 }

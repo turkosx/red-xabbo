@@ -5,6 +5,11 @@ namespace Xabbo.ViewModels;
 
 public class OfferItemsViewModel : ViewModelBase, IModalDialogViewModel
 {
+    public OfferItemsViewModel()
+    {
+        InitializeLocalization();
+    }
+
     public bool? DialogResult => null;
 
     public List<OfferItemViewModel> Items { get; set; } = [];

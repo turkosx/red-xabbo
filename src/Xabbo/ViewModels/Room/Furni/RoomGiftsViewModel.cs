@@ -38,6 +38,7 @@ public sealed class RoomGiftsViewModel : ViewModelBase
         IGameDataManager gameData,
         RoomManager roomManager)
     {
+        InitializeLocalization();
         _ext = ext;
         _gameData = gameData;
         _roomManager = roomManager;
@@ -60,6 +61,14 @@ public sealed class RoomGiftsViewModel : ViewModelBase
 
         PeekAllCmd = ReactiveCommand.Create(PeekAll);
         LocateGiftCmd = ReactiveCommand.Create<GiftViewModel?>(LocateGift);
+    }
+
+    protected override void OnLanguageChanged()
+    {
+        base.OnLanguageChanged();
+
+        foreach (var gift in _cache.Items)
+            gift.NotifyLocalizationChanged();
     }
 
     private void ShowFurniTransition(IFloorItem item, Tile? from = null, Tile? to = null, int duration = 1000)

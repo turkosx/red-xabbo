@@ -87,6 +87,7 @@ public class RoomAvatarsViewModel : ViewModelBase
         RoomManager roomManager,
         TradeManager tradeManager)
     {
+        InitializeLocalization();
         _ext = ext;
         _config = config;
         _uiContext = uiContext;

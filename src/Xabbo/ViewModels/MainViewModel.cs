@@ -61,12 +61,11 @@ public class MainViewModel : ViewModelBase
         _config = config;
         _localizer = localizationService;
         _launcher = launcher;
+        InitializeLocalization(localizationService);
 
         Pages = [general, wardrobe, inventory, friends, chat, room, gameData];
         FooterPages = [languageToggle, info, settings];
         SelectedPage = general;
-
-        _localizer.LanguageChanged += OnLanguageChanged;
 
         ToggleLanguageCmd = ReactiveCommand.Create(ToggleLanguage);
         ReportErrorCmd = ReactiveCommand.Create(ReportError);
@@ -88,19 +87,12 @@ public class MainViewModel : ViewModelBase
         ApplySelectedLanguage(next);
     }
 
-    private void OnLanguageChanged()
+    protected override void OnLanguageChanged()
     {
+        base.OnLanguageChanged();
         this.RaisePropertyChanged(nameof(LanguageToolTip));
         this.RaisePropertyChanged(nameof(ReportIssueText));
         this.RaisePropertyChanged(nameof(GitHubText));
-    }
-
-    private string T(string key)
-    {
-        if (_localizer is null)
-            return key;
-
-        return _localizer.Get(key);
     }
 
     private void ReportError()

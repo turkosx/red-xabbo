@@ -1,7 +1,8 @@
-﻿using Xabbo.Extension;
+using Xabbo.Extension;
 using Xabbo.Core.Messages.Outgoing;
 using Xabbo.Services.Abstractions;
 using Xabbo.Configuration;
+using Xabbo.Utility;
 
 namespace Xabbo.Components;
 
@@ -15,7 +16,8 @@ public partial class AntiWalkComponent(
     [Intercept]
     private void OnMove(Intercept<WalkMsg> e)
     {
-        if (config.Value.Movement.NoWalk)
+        if (config.Value.Movement.NoWalk ||
+            (config.Value.Movement.NoWalkWhenShiftPressed && KeyboardState.IsShiftPressed()))
         {
             e.Block();
 
